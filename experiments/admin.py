@@ -11,10 +11,10 @@ class LabPersonAdmin(admin.ModelAdmin):
 
 @admin.register(Experiment)
 class ExperimentAdmin(admin.ModelAdmin):
-    list_display = ("id", "compound", "experiment_type", "lab_person", "appointed", "created", "updated", "progress", "comments", "final", "result1", "result2", "result3")
+    list_display = ("compound", "experiment_type", "lab_person", "appointed", "created", "updated", "progress", "comments", "final", "result1", "result2", "result3")
     list_filter = ("compound", "experiment_type", "lab_person", "progress", "final")
     search_fields = ("compound", "experiment_type", "lab_person",  "progress", "final")
-    prepopulated_fields = {"slug": ("compound", "experiment_type", "id")}
+    # prepopulated_fields = {"slug": ("compound", "experiment_type")}
     # raw_id_fields = ("author", )
     date_hierarchy = "appointed"
     ordering = ("appointed", "compound")
@@ -46,4 +46,3 @@ class CompoundTypeAdmin(admin.ModelAdmin):
     list_display = ("compound_name",)
     list_filter = ("compound_name",)
     prepopulated_fields = {"slug": ("compound_name", )}
- 

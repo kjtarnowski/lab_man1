@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col">
+	<div class="card card-body">
+	<form method="get">
+           {{tableFilter.form}}
+        <button class="btn btn-primary" type="submit">Search</button>
+	</form>
+	</div>
+    </div>
+</div>
+<div class="row">
+	<div class="col-md">
+	<div class="card card-body">
+	<table class="table table-sm">
+	<tr>
+	    <th>Compound</th>
+        <th>Experiment Type</th>
+        <th>Appointed</th>
+	    <th>Aparat</th>
+	    <th>LabPerson</th>
+	    <th>Progress</th>
+        <th>Final</th>
+        <th>Result1</th>
+        <th>Result2</th>
+        <th>Result3</th>
+        <th>Commnents</th>
+	</tr>
+	{% for experiment_filter in tableFilter.qs %}
+	<tr>
+	    <td>{{experiment_filter.compound}}</td>
+        <td>{{experiment_filter.experiment_type}}</td>
+        <td>{{experiment_filter.appointed}}</td>
+        <td>{{experiment_filter.aparat}}</td>
+        <td>{{experiment_filter.lab_person}}</td>
+        <td>{{experiment_filter.progress}}</td>
+        <td>{{experiment_filter.final}}</td>
+        <td>{{experiment_filter.result1}}</td>
+        <td>{{experiment_filter.result2}}</td>
+        <td>{{experiment_filter.result3}}</td>
+        <td>{{experiment_filter.content}}</td>
+	</tr>
+	{% endfor %}
+	</table>
+	</div>
+	</div>
+</div>
+{% endblock content %}
+
+

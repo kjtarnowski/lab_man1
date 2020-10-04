@@ -60,7 +60,7 @@ class Experiment(models.Model):
         ("TBD", "ONGOING"),
         ("UC", "DONE")
     )
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    #id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     comments = models.TextField(default="-")
     appointed = models.DateTimeField(default=timezone.now)
     created = models.DateTimeField(auto_now_add=True)
@@ -72,7 +72,7 @@ class Experiment(models.Model):
     lab_person = models.ForeignKey(
         LabPerson, on_delete=models.CASCADE, related_name='experiments_of_person')
     aparat = models.ForeignKey(
-        LabPerson, on_delete=models.CASCADE, related_name='experiments_on_this_aparat')
+        Aparat, on_delete=models.CASCADE, related_name='experiments_on_this_aparat')
     progress = models.CharField(
         max_length=10,
         choices=PROGRESS_CHOICES,
@@ -82,12 +82,12 @@ class Experiment(models.Model):
     result2 = models.FloatField(default=0.0)
     result3 = models.FloatField(default=0.0)
     final = models.BooleanField(default=False)
-    slug = models.SlugField(max_length=250)
+    # slug = models.SlugField(max_length=250)
 
     def __str__(self):
         return "_".join([
-            self.compound,
-            self.experiment_name,
+            self.compound.compound_name,
+            self.experiment_type.experiment_name,
             self.created.strftime("%m/%d/%Y, %H:%M:%S")
             ])
 
