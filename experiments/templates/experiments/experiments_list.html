@@ -41,6 +41,7 @@
         <td>{{experiment_filter.result2}}</td>
         <td>{{experiment_filter.result3}}</td>
         <td>{{experiment_filter.content}}</td>
+        <td><a href="{% url 'experiments:editExperiment' experiment_filter.id %}">Edit experiment data</a></td>
 	</tr>
 	{% endfor %}
 	</table>
