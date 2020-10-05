@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.utils import timezone
+from django.urls import reverse
 
 from .managers import LabPersonManager
 
@@ -57,12 +58,14 @@ class Compound(models.Model):
 
 class Experiment(models.Model):
     PROGRESS_CHOICES = (
-        ("TBD", "ONGOING"),
-        ("UC", "DONE")
+        ("TBD", "TBD"),
+        ("ONGOING", "ONGOING"),
+        ("UC", "UC"),
+        ("TO_REP", "TO_REP")
     )
     #id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     comments = models.TextField(default="-")
-    appointed = models.DateTimeField(default=timezone.now)
+    experiment_date = models.DateField(default=None, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     compound = models.ForeignKey(
@@ -84,22 +87,14 @@ class Experiment(models.Model):
     final = models.BooleanField(default=False)
     # slug = models.SlugField(max_length=250)
 
+    def get_absolute_url(self):
+        return reverse(
+            'experiments:experimentList'
+        )
+
     def __str__(self):
         return "_".join([
             self.compound.compound_name,
             self.experiment_type.experiment_name,
             self.created.strftime("%m/%d/%Y, %H:%M:%S")
             ])
-
-
-
-    # def get_absolute_url(self):
-    #     return reverse(
-    #         'blog:post_detail',
-    #         args=[
-    #             self.publish.year,
-    #             self.publish.month,
-    #             self.publish.day,
-    #             self.slug
-    #         ]
-    #     )
