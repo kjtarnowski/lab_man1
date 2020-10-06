@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import LabPerson, Experiment, Project, Aparat, ExperimentType, Compound, Result
+from .models import LabPerson, Experiment, Project, Aparat, ExperimentType, \
+ Compound, Result
 
 
 @admin.register(LabPerson)
@@ -11,9 +12,34 @@ class LabPersonAdmin(admin.ModelAdmin):
 
 @admin.register(Experiment)
 class ExperimentAdmin(admin.ModelAdmin):
-    list_display = ("compound", "experiment_type", "lab_person", "experiment_date", "experimental_set", "created", "updated", "progress", "comments", "final")
-    list_filter = ("compound", "experiment_type", "experiment_date","experimental_set", "lab_person", "progress", "final")
-    search_fields = ("compound", "experiment_type","experimental_set", "lab_person",  "progress")
+    list_display = (
+        "compound",
+        "experiment_type",
+        "lab_person",
+        "experiment_date",
+        "experimental_set",
+        "created",
+        "updated",
+        "progress",
+        "comments",
+        "final"
+        )
+    list_filter = (
+        "compound",
+        "experiment_type",
+        "experiment_date",
+        "experimental_set",
+        "lab_person",
+        "progress",
+        "final"
+    )
+    search_fields = (
+        "compound",
+        "experiment_type",
+        "experimental_set",
+        "lab_person",
+        "progress"
+        )
     # prepopulated_fields = {"slug": ("compound", "experiment_type")}
     # raw_id_fields = ("author", )
     date_hierarchy = "experiment_date"
@@ -22,9 +48,27 @@ class ExperimentAdmin(admin.ModelAdmin):
 
 @admin.register(Result)
 class ResultAdmin(admin.ModelAdmin):
-    list_display = ("compound", "experiment_type", "experiment", "comments", "result1", "result2", "result3", "result4", "result5")
-    list_filter = ("compound", "experiment_type","experiment")
-    search_fields = ("compound", "experiment_type","experiment")
+    list_display = (
+        "compound",
+        "experiment_type",
+        "experiment",
+        "comments",
+        "result1",
+        "result2",
+        "result3",
+        "result4",
+        "result5"
+        )
+    list_filter = (
+        "compound",
+        "experiment_type",
+        "experiment"
+        )
+    search_fields = (
+        "compound",
+        "experiment_type",
+        "experiment"
+        )
     ordering = ("experiment", "compound")
 
 
