@@ -23,7 +23,6 @@ class LabPerson(AbstractBaseUser, PermissionsMixin):
 
 class Project(models.Model):
     project_name = models.CharField(max_length=25)
-    slug = models.SlugField(max_length=250)
 
     def __str__(self):
         return self.project_name
@@ -31,7 +30,6 @@ class Project(models.Model):
 
 class Aparat(models.Model):
     aparat_name = models.CharField(max_length=25)
-    slug = models.SlugField(max_length=250)
 
     def __str__(self):
         return self.aparat_name
@@ -39,10 +37,17 @@ class Aparat(models.Model):
 
 class ExperimentType(models.Model):
     experiment_name = models.CharField(max_length=25)
-    slug = models.SlugField(max_length=250)
 
     def __str__(self):
         return self.experiment_name
+
+
+class ExperimentalSet(models.Model):
+    set_name = models.CharField(max_length=25)
+    experiment_date = models.DateField(default=None, blank=True, null=True)
+
+    def __str__(self):
+        return self.set_name
 
 
 class Compound(models.Model):
@@ -76,6 +81,9 @@ class Experiment(models.Model):
         LabPerson, on_delete=models.CASCADE, related_name='experiments_of_person')
     aparat = models.ForeignKey(
         Aparat, on_delete=models.CASCADE, related_name='experiments_on_this_aparat')
+    experimental_set = models.ForeignKey(
+        ExperimentalSet, on_delete=models.CASCADE, related_name='experiments_of_this_set', blank=True,
+    null=True, default=None)
     progress = models.CharField(
         max_length=10,
         choices=PROGRESS_CHOICES,

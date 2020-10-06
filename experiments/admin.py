@@ -11,9 +11,9 @@ class LabPersonAdmin(admin.ModelAdmin):
 
 @admin.register(Experiment)
 class ExperimentAdmin(admin.ModelAdmin):
-    list_display = ("compound", "experiment_type", "lab_person", "experiment_date", "created", "updated", "progress", "comments", "final")
-    list_filter = ("compound", "experiment_type", "experiment_date", "lab_person", "progress", "final")
-    search_fields = ("compound", "experiment_type", "lab_person",  "progress", "final")
+    list_display = ("compound", "experiment_type", "lab_person", "experiment_date", "experimental_set", "created", "updated", "progress", "comments", "final")
+    list_filter = ("compound", "experiment_type", "experiment_date","experimental_set", "lab_person", "progress", "final")
+    search_fields = ("compound", "experiment_type","experimental_set", "lab_person",  "progress")
     # prepopulated_fields = {"slug": ("compound", "experiment_type")}
     # raw_id_fields = ("author", )
     date_hierarchy = "experiment_date"
@@ -32,25 +32,21 @@ class ResultAdmin(admin.ModelAdmin):
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ("project_name",)
     list_filter = ("project_name",)
-    prepopulated_fields = {"slug": ("project_name", )}
 
 
 @admin.register(Aparat)
 class AparatAdmin(admin.ModelAdmin):
     list_display = ("aparat_name",)
     list_filter = ("aparat_name",)
-    prepopulated_fields = {"slug": ("aparat_name", )}
 
 
 @admin.register(ExperimentType)
 class ExperimentTypeAdmin(admin.ModelAdmin):
     list_display = ("experiment_name",)
     list_filter = ("experiment_name",)
-    prepopulated_fields = {"slug": ("experiment_name", )}
 
 
 @admin.register(Compound)
 class CompoundTypeAdmin(admin.ModelAdmin):
     list_display = ("compound_name",)
     list_filter = ("compound_name",)
-    prepopulated_fields = {"slug": ("compound_name", )}

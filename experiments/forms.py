@@ -10,6 +10,7 @@ class ExperimentForm(forms.ModelForm):
             "experiment_type",
             "lab_person",
             "experiment_date",
+            "experimental_set",
             "progress",
             "comments",
             "final"

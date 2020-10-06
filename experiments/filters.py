@@ -10,7 +10,7 @@ class ExperimentFilter(django_filters.FilterSet):
 
     class Meta:
         model = Experiment
-        fields = '__all__'
+        fields = ["compound", "experiment_type", "lab_person", "experiment_date", "experimental_set", "progress", "comments", "final"]
 
 
 class ResultFilter(django_filters.FilterSet):
