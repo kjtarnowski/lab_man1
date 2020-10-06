@@ -1,4 +1,4 @@
-import uuid
+# import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
@@ -81,20 +81,45 @@ class Experiment(models.Model):
         choices=PROGRESS_CHOICES,
         default="TBD"
     )
-    result1 = models.FloatField(default=0.0)
-    result2 = models.FloatField(default=0.0)
-    result3 = models.FloatField(default=0.0)
     final = models.BooleanField(default=False)
     # slug = models.SlugField(max_length=250)
 
     def get_absolute_url(self):
         return reverse(
-            'experiments:experimentList'
+            'experiments:editExperiment'
         )
 
     def __str__(self):
         return "_".join([
             self.compound.compound_name,
             self.experiment_type.experiment_name,
-            self.created.strftime("%m/%d/%Y, %H:%M:%S")
+            str(self.id)
+            ])
+
+
+class Result(models.Model):
+    comments = models.TextField(default="-")
+    compound = models.ForeignKey(
+        Compound, on_delete=models.CASCADE, related_name='results_for_compounds')
+    experiment_type = models.ForeignKey(
+        ExperimentType, on_delete=models.CASCADE, related_name='results_of_experiment_type')
+    experiment = models.ForeignKey(
+        Experiment, on_delete=models.CASCADE, related_name='results_of_experiment')
+    result1 = models.FloatField(default=None, blank=True, null=True)
+    result2 = models.FloatField(default=None, blank=True, null=True)
+    result3 = models.FloatField(default=None, blank=True, null=True)
+    result4 = models.FloatField(default=None, blank=True, null=True)
+    result5 = models.FloatField(default=None, blank=True, null=True)
+    # slug = models.SlugField(max_length=250)
+
+    def get_absolute_url(self):
+        return reverse(
+            'experiments:editResult'
+        )
+
+    def __str__(self):
+        return "_".join([
+            self.compound.compound_name,
+            self.experiment_type.experiment_name,
+            str(self.experiment.id)
             ])

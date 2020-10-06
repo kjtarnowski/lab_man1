@@ -23,9 +23,6 @@
 	    <th>LabPerson</th>
 	    <th>Progress</th>
         <th>Final</th>
-        <th>Result1</th>
-        <th>Result2</th>
-        <th>Result3</th>
         <th>Commnents</th>
 	</tr>
 	{% for experiment_filter in tableFilter.qs %}
@@ -37,11 +34,8 @@
         <td>{{experiment_filter.lab_person}}</td>
         <td>{{experiment_filter.progress}}</td>
         <td>{{experiment_filter.final}}</td>
-        <td>{{experiment_filter.result1}}</td>
-        <td>{{experiment_filter.result2}}</td>
-        <td>{{experiment_filter.result3}}</td>
-        <td>{{experiment_filter.content}}</td>
-        <td><a href="{% url 'experiments:editExperiment' experiment_filter.id %}">Edit experiment data</a></td>
+        <td>{{experiment_filter.commnents}}</td>
+        <td><a href="{% url 'experiments:editExperiment' experiment_filter.id %}">Edit experiment</a></td>
 	</tr>
 	{% endfor %}
 	</table>

@@ -2,8 +2,8 @@
 
 {% block content %}
     <form action="." method="post">
-    {{ experiment_form.as_p }}
+    {{ result_form.as_p }}
     {% csrf_token %}
-    <p><input type="submit" value="update experiment"></p>
+    <p><input type="submit" value="update result"></p>
     </form>
 {% endblock %}

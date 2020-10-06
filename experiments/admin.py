@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import LabPerson, Experiment, Project, Aparat, ExperimentType, Compound
+from .models import LabPerson, Experiment, Project, Aparat, ExperimentType, Compound, Result
 
 
 @admin.register(LabPerson)
@@ -11,13 +11,21 @@ class LabPersonAdmin(admin.ModelAdmin):
 
 @admin.register(Experiment)
 class ExperimentAdmin(admin.ModelAdmin):
-    list_display = ("compound", "experiment_type", "lab_person", "experiment_date", "created", "updated", "progress", "comments", "final", "result1", "result2", "result3")
-    list_filter = ("compound", "experiment_type","experiment_date", "lab_person", "progress", "final")
+    list_display = ("compound", "experiment_type", "lab_person", "experiment_date", "created", "updated", "progress", "comments", "final")
+    list_filter = ("compound", "experiment_type", "experiment_date", "lab_person", "progress", "final")
     search_fields = ("compound", "experiment_type", "lab_person",  "progress", "final")
     # prepopulated_fields = {"slug": ("compound", "experiment_type")}
     # raw_id_fields = ("author", )
     date_hierarchy = "experiment_date"
     ordering = ("experiment_date", "compound")
+
+
+@admin.register(Result)
+class ResultAdmin(admin.ModelAdmin):
+    list_display = ("compound", "experiment_type", "experiment", "comments", "result1", "result2", "result3", "result4", "result5")
+    list_filter = ("compound", "experiment_type","experiment")
+    search_fields = ("compound", "experiment_type","experiment")
+    ordering = ("experiment", "compound")
 
 
 @admin.register(Project)
