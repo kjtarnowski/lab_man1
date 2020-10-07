@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from .filters import ExperimentFilter, ResultFilter
-from .models import Experiment, Result
-from .forms import ExperimentForm, ResultForm
+from .filters import ExperimentFilter, ResultFilter, CompoundFilter
+from .models import Experiment, Result, Compound
+from .forms import ExperimentForm, ResultForm, CompoundForm
 
 
 def experiments_list(request):
@@ -45,4 +45,26 @@ def edit_result(request, result_id):
         request,
         'experiments/edit_result.html',
         {'result_form': result_form}
+    )
+
+
+def compound_list(request):
+    compound_list = Compound.objects.all()
+    tableFilter = CompoundFilter(request.GET, queryset=compound_list)
+    context = {'experiments': compound_list, 'tableFilter': tableFilter}
+    return render(request, 'experiments/compounds_list.html', context)
+
+
+def edit_compound(request, compound_id):
+    compound_instance = Compound.objects.get(id=compound_id)
+    if request.method == 'POST':
+        compound_form = CompoundForm(data=request.POST, instance=compound_instance)
+        if compound_form.is_valid():
+            compound_form.save()
+    else:
+        compound_form = CompoundForm(instance=compound_instance)
+    return render(
+        request,
+        'experiments/edit_compound.html',
+        {'compound_form': compound_form}
     )

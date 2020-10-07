@@ -1,5 +1,5 @@
 from django import forms
-from .models import Experiment, Result
+from .models import Experiment, Result, Compound
 
 
 class ExperimentForm(forms.ModelForm):
@@ -30,4 +30,16 @@ class ResultForm(forms.ModelForm):
             "result3",
             "result4",
             "result5",
+        )
+
+
+class CompoundForm(forms.ModelForm):
+    class Meta:
+        model = Compound
+        fields = (
+            "compound_name",
+            "compound_mass",
+            "compound_monoisotopic_mass",
+            "compound_formula",
+            "comments"
         )

@@ -52,10 +52,12 @@ class ExperimentalSet(models.Model):
 
 class Compound(models.Model):
     compound_name = models.CharField(max_length=25)
-    compound_mass = models.FloatField()
+    compound_mass = models.FloatField(blank=True, null=True, default=None)
+    compound_monoisotopic_mass = models.FloatField(blank=True, null=True, default=None)
+    compound_formula = models.CharField(max_length=50, blank=True, null=True, default=None)
+    comments = models.TextField(default="-")
     project = models.ForeignKey(
-        Project, on_delete=models.CASCADE, related_name='compounds')
-    slug = models.SlugField(max_length=250)
+        Project, on_delete=models.CASCADE, related_name='compounds_of_the_project')
 
     def __str__(self):
         return self.compound_name
@@ -74,7 +76,7 @@ class Experiment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     compound = models.ForeignKey(
-        Compound, on_delete=models.CASCADE, related_name='experiments_for_compounds')
+        Compound, on_delete=models.CASCADE, related_name='experiments_for_compound')
     experiment_type = models.ForeignKey(
         ExperimentType, on_delete=models.CASCADE, related_name='experiments_of_this_type')
     lab_person = models.ForeignKey(
@@ -108,7 +110,7 @@ class Experiment(models.Model):
 class Result(models.Model):
     comments = models.TextField(default="-")
     compound = models.ForeignKey(
-        Compound, on_delete=models.CASCADE, related_name='results_for_compounds')
+        Compound, on_delete=models.CASCADE, related_name='results_for_compound')
     experiment_type = models.ForeignKey(
         ExperimentType, on_delete=models.CASCADE, related_name='results_of_experiment_type')
     experiment = models.ForeignKey(

@@ -1,7 +1,7 @@
 import django_filters
 from django_filters import CharFilter
 
-from .models import Experiment, Result
+from .models import Experiment, Result, Compound
 
 
 class ExperimentFilter(django_filters.FilterSet):
@@ -20,3 +20,11 @@ class ResultFilter(django_filters.FilterSet):
     class Meta:
         model = Result
         fields = ["compound", "experiment_type", "experiment", "comments"]
+
+
+class CompoundFilter(django_filters.FilterSet):
+    comments = CharFilter(field_name='comments', lookup_expr='icontains')
+
+    class Meta:
+        model = Compound
+        fields = ["compound_name", "comments"]
