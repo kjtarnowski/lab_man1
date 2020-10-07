@@ -15,6 +15,7 @@ class ExperimentForm(forms.ModelForm):
             "comments",
             "final"
         )
+    experiment_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'datetime-input'}))
 
 
 class ResultForm(forms.ModelForm):
