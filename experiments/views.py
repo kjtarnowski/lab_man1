@@ -1,7 +1,9 @@
+import csv, io
 from django.shortcuts import render
 from .filters import ExperimentFilter, ResultFilter, CompoundFilter
-from .models import Experiment, Result, Compound
+from .models import Experiment, Result, Compound, Project
 from .forms import ExperimentForm, ResultForm, CompoundForm
+from django.contrib import messages
 
 
 def experiments_list(request):
@@ -67,4 +69,29 @@ def edit_compound(request, compound_id):
         request,
         'experiments/edit_compound.html',
         {'compound_form': compound_form}
+    )
+
+
+def compounds_upload(request):
+    if request.method == "GET":
+        return render(request, "experiments/upload_compounds.html", {})
+    csv_file = request.FILES['file']
+    if not csv_file.name.endswith('.csv'):
+        messages.error(request, 'THIS IS NOT A CSV FILE')
+    data_set = csv_file.read().decode('UTF-8')
+    io_string = io.StringIO(data_set)
+    next(io_string)
+    for column in csv.reader(io_string, delimiter=',', quotechar="|"):
+        _, created = Compound.objects.update_or_create(
+            compound_name=column[0],
+            compound_mass=column[1],
+            compound_monoisotopic_mass=column[2],
+            compound_formula=column[3],
+            comments=column[4],
+            project=Project.objects.filter(project_name=column[5])[0]
+        )
+    return render(
+        request,
+        "experiments/upload_compounds.html",
+        {}
     )

@@ -92,5 +92,5 @@ class ExperimentTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Compound)
 class CompoundTypeAdmin(admin.ModelAdmin):
-    list_display = ("compound_name", "compound_mass", "compound_formula")
+    list_display = ("compound_name", "compound_mass", "compound_formula", "project")
     list_filter = ("compound_name",)

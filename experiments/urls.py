@@ -11,5 +11,6 @@ urlpatterns = [
     path('resultList/', views.results_list, name='resultList'),
     path('result/<int:result_id>/', views.edit_result, name='editResult'),
     path('compoundList/', views.compound_list, name='compoundList'),
-    path('compound/<int:compound_id>/', views.edit_compound, name='editCompound')
+    path('compound/<int:compound_id>/', views.edit_compound, name='editCompound'),
+    path('uploadCompound', views.compounds_upload, name='uploadCompound')
 ]
