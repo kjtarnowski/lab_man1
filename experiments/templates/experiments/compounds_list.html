@@ -29,7 +29,7 @@
         <td>{{compound_filter.compound_monoisotopic_mass}}</td>
         <td>{{compound_filter.compound_formula}}</td>
         <td>{{compound_filter.comments}}</td>
-        <td><a href="{% url 'experiments:editCompound' compound_filter.id %}">Edit compound</a></td>
+        <td><a href="{% url 'experiments:editCompound' compound_filter.compound_name %}">Edit compound</a></td>
 	</tr>
 	{% endfor %}
 	</table>

@@ -58,7 +58,7 @@ def compound_list(request):
 
 
 def edit_compound(request, compound_id):
-    compound_instance = Compound.objects.get(id=compound_id)
+    compound_instance = Compound.objects.get(compound_name=compound_id)
     if request.method == 'POST':
         compound_form = CompoundForm(data=request.POST, instance=compound_instance)
         if compound_form.is_valid():
@@ -81,15 +81,30 @@ def compounds_upload(request):
     data_set = csv_file.read().decode('UTF-8')
     io_string = io.StringIO(data_set)
     next(io_string)
+    compound_atrributes = [
+        "compound_name",
+        "compound_mass",
+        "compound_monoisotopic_mass",
+        "compound_formula",
+        "comments",
+        "project"
+        ]
     for column in csv.reader(io_string, delimiter=',', quotechar="|"):
-        _, created = Compound.objects.update_or_create(
-            compound_name=column[0],
-            compound_mass=column[1],
-            compound_monoisotopic_mass=column[2],
-            compound_formula=column[3],
-            comments=column[4],
-            project=Project.objects.filter(project_name=column[5])[0]
-        )
+        try:
+            obj = Compound.objects.get(compound_name=column[0])
+            for atrr_num in range(1, 5):
+                setattr(obj, compound_atrributes[atrr_num], column[atrr_num])
+            setattr(obj, compound_atrributes[5], Project.objects.filter(project_name=column[5])[0])
+            obj.save()
+        except Compound.DoesNotExist:
+            Compound.objects.create(
+                compound_name=column[0],
+                compound_mass=column[1],
+                compound_monoisotopic_mass=column[2],
+                compound_formula=column[3],
+                comments=column[4],
+                project=Project.objects.filter(project_name=column[5])[0]
+            )
     return render(
         request,
         "experiments/upload_compounds.html",

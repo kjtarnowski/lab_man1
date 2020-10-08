@@ -51,7 +51,7 @@ class ExperimentalSet(models.Model):
 
 
 class Compound(models.Model):
-    compound_name = models.CharField(max_length=25)
+    compound_name = models.CharField(max_length=25,unique=True,primary_key=True)
     compound_mass = models.FloatField(blank=True, null=True, default=None)
     compound_monoisotopic_mass = models.FloatField(blank=True, null=True, default=None)
     compound_formula = models.CharField(max_length=50, blank=True, null=True, default=None)

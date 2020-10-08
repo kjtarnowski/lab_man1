@@ -24,6 +24,7 @@ class ResultFilter(django_filters.FilterSet):
 
 class CompoundFilter(django_filters.FilterSet):
     comments = CharFilter(field_name='comments', lookup_expr='icontains')
+    compound_name = CharFilter(field_name='compound_name', lookup_expr='icontains')
 
     class Meta:
         model = Compound
