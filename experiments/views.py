@@ -1,9 +1,13 @@
-import csv, io
-from django.shortcuts import render
-from .filters import ExperimentFilter, ResultFilter, CompoundFilter
-from .models import Experiment, Result, Compound, Project
-from .forms import ExperimentForm, ResultForm, CompoundForm
+import csv
+from datetime import datetime
+import io
+
 from django.contrib import messages
+from django.shortcuts import render
+
+from .filters import ExperimentFilter, ResultFilter, CompoundFilter
+from .forms import ExperimentForm, ResultForm, CompoundForm
+from .models import Experiment, Result, Compound, Project, ExperimentalSet, ExperimentType, Aparat, LabPerson
 
 
 def experiments_list(request):
@@ -108,5 +112,51 @@ def compounds_upload(request):
     return render(
         request,
         "experiments/upload_compounds.html",
+        {}
+    )
+
+
+def experiments_upload(request):
+    if request.method == "GET":
+        return render(request, "experiments/upload_experiments.html", {})
+    csv_file = request.FILES['file']
+    if not csv_file.name.endswith('.csv'):
+        messages.error(request, 'THIS IS NOT A CSV FILE')
+    data_set = csv_file.read().decode('UTF-8')
+    io_string = io.StringIO(data_set)
+    next(io_string)
+    for column in csv.reader(io_string, delimiter=',', quotechar="|"):
+        try:
+            exp_set_obj = ExperimentalSet.objects.get(set_name=column[3])
+        except ExperimentalSet.DoesNotExist:
+            exp_set_obj = ExperimentalSet.objects.create(set_name=column[3], experiment_date=datetime.strptime(column[2], '%Y-%m-%d').date())
+        try:
+            obj = Experiment.objects.get(
+                compound=Compound.objects.get(compound_name=column[0]),
+                experimental_set=exp_set_obj
+                )
+            setattr(obj, 'experiment_type', ExperimentType.objects.filter(experiment_name=column[1]))
+            setattr(obj, 'experiment_date', datetime.strptime(column[2], '%Y-%m-%d').date())
+            setattr(obj, 'aparat', Aparat.objects.filter(aparat_name=column[4]))
+            setattr(obj, 'lab_person', LabPerson.objects.filter(lab_name=column[5]))
+            setattr(obj, 'progress', column[6])
+            setattr(obj, 'final', bool(column[7]))
+            setattr(obj, 'comments', column[8])
+            obj.save()
+        except Experiment.DoesNotExist:
+            Experiment.objects.create(
+                compound=Compound.objects.get(compound_name=column[0]),
+                experiment_type=ExperimentType.objects.get(experiment_name=column[1]),
+                experiment_date=datetime.strptime(column[2], '%Y-%m-%d').date(),
+                experimental_set=exp_set_obj,
+                aparat=Aparat.objects.get(aparat_name=column[4]),
+                lab_person=LabPerson.objects.get(lab_name=column[5]),
+                progress=column[6],
+                final=bool(column[7]),
+                comments=column[8]
+            )
+    return render(
+        request,
+        "experiments/upload_experiments.html",
         {}
     )

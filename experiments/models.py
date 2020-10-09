@@ -94,6 +94,11 @@ class Experiment(models.Model):
     final = models.BooleanField(default=False)
     # slug = models.SlugField(max_length=250)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['compound', 'experimental_set'], name='compoud_from_set')
+        ]
+
     def get_absolute_url(self):
         return reverse(
             'experiments:editExperiment'
@@ -101,8 +106,8 @@ class Experiment(models.Model):
 
     def __str__(self):
         return "_".join([
+            self.experimental_set.set_name,
             self.compound.compound_name,
-            self.experiment_type.experiment_name,
             str(self.id)
             ])
 
