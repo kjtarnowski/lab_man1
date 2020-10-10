@@ -17,7 +17,7 @@
 	<table class="table table-sm">
 	<tr>
 	    <th>Compound</th>
-        <th>Experiment Type</th>
+        <th>Experiment Name</th>
         <th>Experiment_Date</th>
         <th>Experimental_Set</th>
 	    <th>Aparat</th>
@@ -29,7 +29,7 @@
 	{% for experiment_filter in tableFilter.qs %}
 	<tr>
 	    <td>{{experiment_filter.compound}}</td>
-        <td>{{experiment_filter.experiment_type}}</td>
+        <td>{{experiment_filter}}</td>
         <td>{{experiment_filter.experiment_date}}</td>
         <td>{{experiment_filter.experimental_set}}</td>
         <td>{{experiment_filter.aparat}}</td>

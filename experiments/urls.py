@@ -13,5 +13,8 @@ urlpatterns = [
     path('compoundList/', views.compound_list, name='compoundList'),
     path('compound/<str:compound_id>/', views.edit_compound, name='editCompound'),
     path('uploadCompound', views.compounds_upload, name='uploadCompound'),
-    path('uploadExperiment', views.experiments_upload, name='uploadExperiment')
+    path('uploadExperiment', views.experiments_upload, name='uploadExperiment'),
+    path('uploadExperimentSpresults', views.experiments_upload_with_Sp_results, name='uploadExperimentSpresults'),
+    path('uploadExperimentARRresults', views.experiments_upload_with_ARR_results, name='uploadExperimentARRresults'),
+    path('uploadExperimentMLOGPresults', views.experiments_upload_with_MLOGP_results, name='uploadExperimentMLOGPresults'),
 ]

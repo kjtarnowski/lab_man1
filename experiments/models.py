@@ -35,11 +35,11 @@ class Aparat(models.Model):
         return self.aparat_name
 
 
-class ExperimentType(models.Model):
-    experiment_name = models.CharField(max_length=25)
+# class ExperimentType(models.Model):
+#     experiment_name = models.CharField(max_length=25)
 
-    def __str__(self):
-        return self.experiment_name
+#     def __str__(self):
+#         return self.experiment_name
 
 
 class ExperimentalSet(models.Model):
@@ -77,8 +77,8 @@ class Experiment(models.Model):
     updated = models.DateTimeField(auto_now=True)
     compound = models.ForeignKey(
         Compound, on_delete=models.CASCADE, related_name='experiments_for_compound')
-    experiment_type = models.ForeignKey(
-        ExperimentType, on_delete=models.CASCADE, related_name='experiments_of_this_type')
+    # experiment_type = models.ForeignKey(
+    #     ExperimentType, on_delete=models.CASCADE, related_name='experiments_of_this_type')
     lab_person = models.ForeignKey(
         LabPerson, on_delete=models.CASCADE, related_name='experiments_of_person')
     aparat = models.ForeignKey(
@@ -112,12 +112,22 @@ class Experiment(models.Model):
             ])
 
 
+class Experiment_Sp(Experiment):
+    result_Sp = models.FloatField(default=None, blank=True, null=True)
+    result_HyWi = models.FloatField(default=None, blank=True, null=True)
+
+
+class Experiment_ARR(Experiment):
+    result_ARR = models.FloatField(default=None, blank=True, null=True)
+    result_GSTS2i = models.FloatField(default=None, blank=True, null=True)
+
+
+class Experiment_MLOGP(Experiment):
+    result_MLOGP = models.FloatField(default=None, blank=True, null=True)
+    result_Eta_beta = models.FloatField(default=None, blank=True, null=True)
+
+
 class Result(models.Model):
-    comments = models.TextField(default="-")
-    compound = models.ForeignKey(
-        Compound, on_delete=models.CASCADE, related_name='results_for_compound')
-    experiment_type = models.ForeignKey(
-        ExperimentType, on_delete=models.CASCADE, related_name='results_of_experiment_type')
     experiment = models.ForeignKey(
         Experiment, on_delete=models.CASCADE, related_name='results_of_experiment')
     result1 = models.FloatField(default=None, blank=True, null=True)
@@ -125,7 +135,6 @@ class Result(models.Model):
     result3 = models.FloatField(default=None, blank=True, null=True)
     result4 = models.FloatField(default=None, blank=True, null=True)
     result5 = models.FloatField(default=None, blank=True, null=True)
-    # slug = models.SlugField(max_length=250)
 
     def get_absolute_url(self):
         return reverse(

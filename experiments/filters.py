@@ -10,16 +10,16 @@ class ExperimentFilter(django_filters.FilterSet):
 
     class Meta:
         model = Experiment
-        fields = ["compound", "experiment_type", "lab_person", "experiment_date", "experimental_set", "progress", "comments", "final"]
+        fields = ["compound", "lab_person", "experiment_date", "experimental_set", "progress", "comments", "final"]
 
 
-class ResultFilter(django_filters.FilterSet):
-    compound = CharFilter(field_name='compound__compound_name', lookup_expr='icontains')
-    comments = CharFilter(field_name='comments', lookup_expr='icontains')
+# class ResultFilter(django_filters.FilterSet):
+#     compound = CharFilter(field_name='compound__compound_name', lookup_expr='icontains')
+#     comments = CharFilter(field_name='comments', lookup_expr='icontains')
 
-    class Meta:
-        model = Result
-        fields = ["compound", "experiment_type", "experiment", "comments"]
+    # class Meta:
+    #     model = Result
+    #     fields = ["compound", "experiment", "comments"]
 
 
 class CompoundFilter(django_filters.FilterSet):
