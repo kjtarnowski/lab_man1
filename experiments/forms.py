@@ -21,12 +21,17 @@ class ResultForm(forms.ModelForm):
     class Meta:
         model = Result
         fields = (
-            "experiment",
-            "result1",
-            "result2",
-            "result3",
-            "result4",
-            "result5",
+            "compound",
+            "experiment_Sp",
+            "experiment_Sp",
+            "experiment_MLOGP",
+            "result_Sp",
+            "result_HyWi",
+            "result_ARR",
+            "result_GSTS2i",
+            "result_MLOGP",
+            "result_Eta_beta",
+            "comments"
         )
 
 

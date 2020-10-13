@@ -128,13 +128,21 @@ class Experiment_MLOGP(Experiment):
 
 
 class Result(models.Model):
-    experiment = models.ForeignKey(
-        Experiment, on_delete=models.CASCADE, related_name='results_of_experiment')
-    result1 = models.FloatField(default=None, blank=True, null=True)
-    result2 = models.FloatField(default=None, blank=True, null=True)
-    result3 = models.FloatField(default=None, blank=True, null=True)
-    result4 = models.FloatField(default=None, blank=True, null=True)
-    result5 = models.FloatField(default=None, blank=True, null=True)
+    compound = models.ForeignKey(
+        Compound, on_delete=models.CASCADE, related_name='results_for_compounds',default=None, blank=True, null=True)
+    experiment_Sp = models.ForeignKey(
+        Experiment_Sp, on_delete=models.CASCADE, related_name='results_of_experiment',default=None, blank=True, null=True)
+    experiment_ARR = models.ForeignKey(
+        Experiment_ARR, on_delete=models.CASCADE, related_name='results_of_experiment',default=None, blank=True, null=True)
+    experiment_MLOGP = models.ForeignKey(
+        Experiment_MLOGP, on_delete=models.CASCADE, related_name='results_of_experiment',default=None, blank=True, null=True)
+    result_Sp = models.FloatField(default=None, blank=True, null=True)
+    result_HyWi = models.FloatField(default=None, blank=True, null=True)
+    result_ARR = models.FloatField(default=None, blank=True, null=True)
+    result_GSTS2i = models.FloatField(default=None, blank=True, null=True)
+    result_MLOGP = models.FloatField(default=None, blank=True, null=True)
+    result_Eta_beta = models.FloatField(default=None, blank=True, null=True)
+    comments = models.TextField(default="-")
 
     def get_absolute_url(self):
         return reverse(
@@ -144,6 +152,6 @@ class Result(models.Model):
     def __str__(self):
         return "_".join([
             self.compound.compound_name,
-            self.experiment_type.experiment_name,
-            str(self.experiment.id)
+            "result_id",
+            str(self.id)
             ])
