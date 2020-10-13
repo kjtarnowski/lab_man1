@@ -116,32 +116,65 @@ class Experiment_Sp(Experiment):
     result_Sp = models.FloatField(default=None, blank=True, null=True)
     result_HyWi = models.FloatField(default=None, blank=True, null=True)
 
+    def save(self, *args, **kwargs):
+        if self.final:
+            try:
+                res_obj = Result.objects.get(compound=self.compound)
+                setattr(res_obj, 'experiment_Sp', self)
+                res_obj.save()
+            except Result.DoesNotExist:
+                res_obj = Result.objects.create(
+                    compound=self.compound,
+                    experiment_Sp=self,
+                    )
+        super().save(*args, **kwargs)
+
 
 class Experiment_ARR(Experiment):
     result_ARR = models.FloatField(default=None, blank=True, null=True)
     result_GSTS2i = models.FloatField(default=None, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if self.final:
+            try:
+                res_obj = Result.objects.get(compound=self.compound)
+                setattr(res_obj, 'experiment_ARR', self)
+                res_obj.save()
+            except Result.DoesNotExist:
+                res_obj = Result.objects.create(
+                    compound=self.compound,
+                    experiment_ARR=self,
+                    )
+        super().save(*args, **kwargs)
 
 
 class Experiment_MLOGP(Experiment):
     result_MLOGP = models.FloatField(default=None, blank=True, null=True)
     result_Eta_beta = models.FloatField(default=None, blank=True, null=True)
 
+    def save(self, *args, **kwargs):
+        if self.final:
+            try:
+                res_obj = Result.objects.get(compound=self.compound)
+                setattr(res_obj, 'experiment_MLOGP', self)
+                res_obj.save()
+            except Result.DoesNotExist:
+                res_obj = Result.objects.create(
+                    compound=self.compound,
+                    experiment_MLOGP=self,
+                    )
+        super().save(*args, **kwargs)
+
 
 class Result(models.Model):
     compound = models.ForeignKey(
-        Compound, on_delete=models.CASCADE, related_name='results_for_compounds',default=None, blank=True, null=True)
+        Compound, on_delete=models.CASCADE, related_name='results_for_compounds',default=None, blank=True, null=True, unique=True)
     experiment_Sp = models.ForeignKey(
-        Experiment_Sp, on_delete=models.CASCADE, related_name='results_of_experiment',default=None, blank=True, null=True)
+        Experiment_Sp, on_delete=models.SET_NULL, related_name='results_of_experiment_Sp',default=None, blank=True, null=True)
     experiment_ARR = models.ForeignKey(
-        Experiment_ARR, on_delete=models.CASCADE, related_name='results_of_experiment',default=None, blank=True, null=True)
+        Experiment_ARR, on_delete=models.SET_NULL, related_name='results_of_experiment_ARR',default=None, blank=True, null=True)
     experiment_MLOGP = models.ForeignKey(
-        Experiment_MLOGP, on_delete=models.CASCADE, related_name='results_of_experiment',default=None, blank=True, null=True)
-    result_Sp = models.FloatField(default=None, blank=True, null=True)
-    result_HyWi = models.FloatField(default=None, blank=True, null=True)
-    result_ARR = models.FloatField(default=None, blank=True, null=True)
-    result_GSTS2i = models.FloatField(default=None, blank=True, null=True)
-    result_MLOGP = models.FloatField(default=None, blank=True, null=True)
-    result_Eta_beta = models.FloatField(default=None, blank=True, null=True)
+        Experiment_MLOGP, on_delete=models.SET_NULL, related_name='results_of_experiment_MLOGP',default=None, blank=True, null=True)
     comments = models.TextField(default="-")
 
     def get_absolute_url(self):

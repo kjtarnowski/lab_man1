@@ -25,12 +25,12 @@ class ResultForm(forms.ModelForm):
             "experiment_Sp",
             "experiment_Sp",
             "experiment_MLOGP",
-            "result_Sp",
-            "result_HyWi",
-            "result_ARR",
-            "result_GSTS2i",
-            "result_MLOGP",
-            "result_Eta_beta",
+            # "result_Sp",
+            # "result_HyWi",
+            # "result_ARR",
+            # "result_GSTS2i",
+            # "result_MLOGP",
+            # "result_Eta_beta",
             "comments"
         )
 

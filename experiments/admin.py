@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import LabPerson, Experiment, Project, Aparat,  \
- Compound, Result, ExperimentalSet, Experiment_Sp  #ExperimentType,
+ Compound, Result, ExperimentalSet, Experiment_Sp, Experiment_ARR
 
 
 @admin.register(LabPerson)
@@ -48,14 +48,14 @@ class ResultAdmin(admin.ModelAdmin):
     list_display = (
         "compound",
         "experiment_Sp",
-        "experiment_Sp",
+        "experiment_ARR",
         "experiment_MLOGP",
-        "result_Sp",
-        "result_HyWi",
-        "result_ARR",
-        "result_GSTS2i",
-        "result_MLOGP",
-        "result_Eta_beta",
+        # "result_Sp",
+        # "result_HyWi",
+        # "result_ARR",
+        # "result_GSTS2i",
+        # "result_MLOGP",
+        # "result_Eta_beta",
         "comments",
         )
     search_fields = (
@@ -107,6 +107,41 @@ class ExperimentAdmin(admin.ModelAdmin):
         "final",
         "result_Sp",
         "result_HyWi"
+        )
+    list_filter = (
+        "compound",
+        "experiment_date",
+        "experimental_set",
+        "lab_person",
+        "progress",
+        "final"
+    )
+    search_fields = (
+        "compound",
+        "experimental_set",
+        "lab_person",
+        "progress"
+        )
+    # prepopulated_fields = {"slug": ("compound", "experiment_type")}
+    # raw_id_fields = ("author", )
+    date_hierarchy = "experiment_date"
+    ordering = ("experiment_date", "compound")
+
+
+@admin.register(Experiment_ARR)
+class ExperimentAdmin(admin.ModelAdmin):
+    list_display = (
+        "compound",
+        "lab_person",
+        "experiment_date",
+        "experimental_set",
+        "created",
+        "updated",
+        "progress",
+        "comments",
+        "final",
+        "result_ARR",
+        "result_GSTS2i"
         )
     list_filter = (
         "compound",

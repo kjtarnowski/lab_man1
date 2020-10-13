@@ -5,7 +5,7 @@ import io
 from django.contrib import messages
 from django.shortcuts import render
 
-from .filters import ExperimentFilter, CompoundFilter
+from .filters import ExperimentFilter, CompoundFilter, ResultFilter
 from .forms import ExperimentForm, ResultForm, CompoundForm
 from .models import Experiment, Result, Compound, Project, ExperimentalSet, \
  Aparat, LabPerson, Experiment_Sp, Experiment_ARR, Experiment_MLOGP  #ExperimentType
