@@ -8,7 +8,7 @@ from django.shortcuts import render
 from .filters import ExperimentFilter, CompoundFilter, ResultFilter
 from .forms import ExperimentForm, ResultForm, CompoundForm
 from .models import Experiment, Result, Compound, Project, ExperimentalSet, \
- Aparat, LabPerson, Experiment_Sp, Experiment_ARR, Experiment_MLOGP  #ExperimentType
+ Aparat, LabPerson, Experiment_Sp, Experiment_ARR, Experiment_MLOGP
 
 
 def experiments_list(request):
@@ -21,7 +21,10 @@ def experiments_list(request):
 def edit_experiment(request, experiment_id):
     experiment_instance = Experiment.objects.get(id=experiment_id)
     if request.method == 'POST':
-        experiment_form = ExperimentForm(data=request.POST, instance=experiment_instance)
+        experiment_form = ExperimentForm(
+            data=request.POST,
+            instance=experiment_instance
+            )
         if experiment_form.is_valid():
             experiment_form.save()
     else:
@@ -63,9 +66,12 @@ def compound_list(request):
 
 
 def edit_compound(request, compound_id):
-    compound_instance = Compound.objects.get(compound_name=compound_id)
+    compound_instance = Compound.objects.get(name=compound_id)
     if request.method == 'POST':
-        compound_form = CompoundForm(data=request.POST, instance=compound_instance)
+        compound_form = CompoundForm(
+            data=request.POST,
+            instance=compound_instance)
+
         if compound_form.is_valid():
             compound_form.save()
     else:
@@ -87,28 +93,28 @@ def compounds_upload(request):
     io_string = io.StringIO(data_set)
     next(io_string)
     compound_atrributes = [
-        "compound_name",
-        "compound_mass",
-        "compound_monoisotopic_mass",
-        "compound_formula",
+        "name",
+        "mass",
+        "monoisotopic_mass",
+        "formula",
         "comments",
         "project"
         ]
     for column in csv.reader(io_string, delimiter=',', quotechar="|"):
         try:
-            obj = Compound.objects.get(compound_name=column[0])
+            obj = Compound.objects.get(name=column[0])
             for atrr_num in range(1, 5):
                 setattr(obj, compound_atrributes[atrr_num], column[atrr_num])
-            setattr(obj, compound_atrributes[5], Project.objects.filter(project_name=column[5])[0])
+            setattr(obj, compound_atrributes[5], Project.objects.filter(name=column[5])[0])
             obj.save()
         except Compound.DoesNotExist:
             Compound.objects.create(
-                compound_name=column[0],
-                compound_mass=column[1],
-                compound_monoisotopic_mass=column[2],
-                compound_formula=column[3],
+                name=column[0],
+                mass=column[1],
+                monoisotopic_mass=column[2],
+                formula=column[3],
                 comments=column[4],
-                project=Project.objects.filter(project_name=column[5])[0]
+                project=Project.objects.filter(name=column[5])[0]
             )
     return render(
         request,
@@ -134,28 +140,28 @@ def experiments_upload(request):
         if column[1] == "MLOGP":
             Exp = Experiment_MLOGP
         try:
-            exp_set_obj = ExperimentalSet.objects.get(set_name=column[3])
+            exp_set_obj = ExperimentalSet.objects.get(name=column[3])
         except ExperimentalSet.DoesNotExist:
-            exp_set_obj = ExperimentalSet.objects.create(set_name=column[3], experiment_date=datetime.strptime(column[2], '%Y-%m-%d').date())
+            exp_set_obj = ExperimentalSet.objects.create(name=column[3], experiment_date=datetime.strptime(column[2], '%Y-%m-%d').date())
         try:
             obj = Exp.objects.get(
-                compound=Compound.objects.get(compound_name=column[0]),
+                compound=Compound.objects.get(name=column[0]),
                 experimental_set=exp_set_obj
                 )
             setattr(obj, 'experiment_date', datetime.strptime(column[2], '%Y-%m-%d').date())
-            setattr(obj, 'aparat', Aparat.objects.filter(aparat_name=column[4]))
-            setattr(obj, 'lab_person', LabPerson.objects.filter(lab_name=column[5]))
+            setattr(obj, 'aparat', Aparat.objects.filter(name=column[4]))
+            setattr(obj, 'lab_person', LabPerson.objects.filter(name=column[5]))
             setattr(obj, 'progress', column[6])
             setattr(obj, 'final', bool(column[7]))
             setattr(obj, 'comments', column[8])
             obj.save()
         except Experiment.DoesNotExist:
             Exp.objects.create(
-                compound=Compound.objects.get(compound_name=column[0]),
+                compound=Compound.objects.get(name=column[0]),
                 experiment_date=datetime.strptime(column[2], '%Y-%m-%d').date(),
                 experimental_set=exp_set_obj,
-                aparat=Aparat.objects.get(aparat_name=column[4]),
-                lab_person=LabPerson.objects.get(lab_name=column[5]),
+                aparat=Aparat.objects.get(name=column[4]),
+                lab_person=LabPerson.objects.get(name=column[5]),
                 progress=column[6],
                 final=bool(column[7]),
                 comments=column[8]
@@ -178,8 +184,8 @@ def experiments_upload_with_Sp_results(request):
     next(io_string)
     for column in csv.reader(io_string, delimiter=',', quotechar="|"):
             obj = Experiment_Sp.objects.get(
-                compound=Compound.objects.get(compound_name=column[0]),
-                experimental_set=ExperimentalSet.objects.get(set_name=column[3])
+                compound=Compound.objects.get(name=column[0]),
+                experimental_set=ExperimentalSet.objects.get(name=column[3])
                 )
             setattr(obj, 'comments', column[8])
             setattr(obj, 'result_Sp', column[9])
@@ -203,8 +209,8 @@ def experiments_upload_with_ARR_results(request):
     next(io_string)
     for column in csv.reader(io_string, delimiter=',', quotechar="|"):
             obj = Experiment_ARR.objects.get(
-                compound=Compound.objects.get(compound_name=column[0]),
-                experimental_set=ExperimentalSet.objects.get(set_name=column[3])
+                compound=Compound.objects.get(name=column[0]),
+                experimental_set=ExperimentalSet.objects.get(name=column[3])
                 )
             setattr(obj, 'comments', column[8])
             setattr(obj, 'result_ARR', column[9])
@@ -228,8 +234,8 @@ def experiments_upload_with_MLOGP_results(request):
     next(io_string)
     for column in csv.reader(io_string, delimiter=',', quotechar="|"):
             obj = Experiment_MLOGP.objects.get(
-                compound=Compound.objects.get(compound_name=column[0]),
-                experimental_set=ExperimentalSet.objects.get(set_name=column[3])
+                compound=Compound.objects.get(name=column[0]),
+                experimental_set=ExperimentalSet.objects.get(name=column[3])
                 )
             setattr(obj, 'comments', column[8])
             setattr(obj, 'result_MLOGP', column[9])

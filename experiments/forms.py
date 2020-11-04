@@ -14,7 +14,9 @@ class ExperimentForm(forms.ModelForm):
             "comments",
             "final"
         )
-    experiment_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'datetime-input'}))
+    experiment_date = forms.DateField(widget=forms.DateInput(attrs={
+        'class': 'datetime-input'
+        }))
 
 
 class ResultForm(forms.ModelForm):
@@ -39,9 +41,9 @@ class CompoundForm(forms.ModelForm):
     class Meta:
         model = Compound
         fields = (
-            "compound_name",
-            "compound_mass",
-            "compound_monoisotopic_mass",
-            "compound_formula",
+            "name",
+            "mass",
+            "monoisotopic_mass",
+            "formula",
             "comments"
         )

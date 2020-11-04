@@ -5,9 +5,9 @@ from .models import LabPerson, Experiment, Project, Aparat,  \
 
 @admin.register(LabPerson)
 class LabPersonAdmin(admin.ModelAdmin):
-    list_display = ("lab_name", "date_joined", "is_staff", "is_active")
-    list_filter = ('lab_name',)
-    search_fields = ('lab_name',)
+    list_display = ("name", "date_joined", "is_staff", "is_active")
+    list_filter = ('name',)
+    search_fields = ('name',)
 
 
 @admin.register(Experiment)
@@ -65,14 +65,14 @@ class ResultAdmin(admin.ModelAdmin):
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ("project_name",)
-    list_filter = ("project_name",)
+    list_display = ("name",)
+    list_filter = ("name",)
 
 
 @admin.register(Aparat)
 class AparatAdmin(admin.ModelAdmin):
-    list_display = ("aparat_name",)
-    list_filter = ("aparat_name",)
+    list_display = ("name",)
+    list_filter = ("name",)
 
 
 # @admin.register(ExperimentType)
@@ -83,14 +83,14 @@ class AparatAdmin(admin.ModelAdmin):
 
 @admin.register(Compound)
 class CompoundTypeAdmin(admin.ModelAdmin):
-    list_display = ("compound_name", "compound_mass", "compound_formula", "project", "comments")
-    list_filter = ("compound_name",)
+    list_display = ("name", "mass", "formula", "project", "comments")
+    list_filter = ("name",)
 
 
 @admin.register(ExperimentalSet)
 class ExperimentalSetAdmin(admin.ModelAdmin):
-    list_display = ("set_name", "experiment_date")
-    list_filter = ("set_name",)
+    list_display = ("name", "experiment_date")
+    list_filter = ("name",)
 
 
 @admin.register(Experiment_Sp)
@@ -157,7 +157,5 @@ class ExperimentAdmin(admin.ModelAdmin):
         "lab_person",
         "progress"
         )
-    # prepopulated_fields = {"slug": ("compound", "experiment_type")}
-    # raw_id_fields = ("author", )
     date_hierarchy = "experiment_date"
     ordering = ("experiment_date", "compound")

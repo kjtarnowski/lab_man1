@@ -5,16 +5,23 @@ from .models import Experiment, Result, Compound
 
 
 class ExperimentFilter(django_filters.FilterSet):
-    compound = CharFilter(field_name='compound__compound_name', lookup_expr='icontains')
+    compound = CharFilter(field_name='compound__name', lookup_expr='icontains')
     comments = CharFilter(field_name='comments', lookup_expr='icontains')
 
     class Meta:
         model = Experiment
-        fields = ["compound", "lab_person", "experiment_date", "experimental_set", "progress", "comments", "final"]
+        fields = [
+            "compound",
+            "lab_person",
+            "experiment_date",
+            "experimental_set",
+            "progress",
+            "comments",
+            "final"]
 
 
 class ResultFilter(django_filters.FilterSet):
-    compound = CharFilter(field_name='compound__compound_name', lookup_expr='icontains')
+    compound = CharFilter(field_name='compound__name', lookup_expr='icontains')
     comments = CharFilter(field_name='comments', lookup_expr='icontains')
 
     class Meta:
@@ -24,8 +31,8 @@ class ResultFilter(django_filters.FilterSet):
 
 class CompoundFilter(django_filters.FilterSet):
     comments = CharFilter(field_name='comments', lookup_expr='icontains')
-    compound_name = CharFilter(field_name='compound_name', lookup_expr='icontains')
+    name = CharFilter(field_name='name', lookup_expr='icontains')
 
     class Meta:
         model = Compound
-        fields = ["compound_name", "comments"]
+        fields = ["name", "comments"]
