@@ -24,12 +24,12 @@
 	</tr>
 	{% for compound_filter in tableFilter.qs %}
 	<tr>
-	    <td>{{compound_filter.compound_name}}</td>
-        <td>{{compound_filter.compound_mass}}</td>
-        <td>{{compound_filter.compound_monoisotopic_mass}}</td>
-        <td>{{compound_filter.compound_formula}}</td>
+	    <td>{{compound_filter.name}}</td>
+        <td>{{compound_filter.mass}}</td>
+        <td>{{compound_filter.monoisotopic_mass}}</td>
+        <td>{{compound_filter.formula}}</td>
         <td>{{compound_filter.comments}}</td>
-        <td><a href="{% url 'experiments:editCompound' compound_filter.compound_name %}">Edit compound</a></td>
+        <td><a href="{% url 'experiments:editCompound' compound_filter.id %}">Edit compound</a></td>
 	</tr>
 	{% endfor %}
 	</table>

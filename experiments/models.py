@@ -63,6 +63,11 @@ class Compound(models.Model):
 
 
 class Experiment(models.Model):
+    EXPTYPE_CHOICES = (
+        ("Sp", "Sp"),
+        ("ARR", "ARR"),
+        ("MLOGP", "MLOGP")
+    )
     PROGRESS_CHOICES = (
         ("TBD", "TBD"),
         ("ONGOING", "ONGOING"),
@@ -97,8 +102,13 @@ class Experiment(models.Model):
         choices=PROGRESS_CHOICES,
         default="TBD"
     )
+    exptype = models.CharField(
+        max_length=10,
+        choices=EXPTYPE_CHOICES,
+        default="Sp"
+    )
     final = models.BooleanField(default=False)
-    experimental_results = JSONField()
+    experimental_results = JSONField(blank=True, null=True)
 
     class Meta:
         constraints = [
@@ -120,104 +130,11 @@ class Experiment(models.Model):
             ])
 
 
-class Experiment_Sp(Experiment):
-    result_Sp = models.FloatField(default=None, blank=True, null=True)
-    result_HyWi = models.FloatField(default=None, blank=True, null=True)
-
-    def save(self, *args, **kwargs):
-        if self.final:
-            try:
-                res_obj = Result.objects.get(compound=self.compound)
-                setattr(res_obj, 'experiment_Sp', self)
-                res_obj.save()
-            except Result.DoesNotExist:
-                res_obj = Result.objects.create(
-                    compound=self.compound,
-                    experiment_Sp=self,
-                    )
-        super().save(*args, **kwargs)
-
-
-class Experiment_ARR(Experiment):
-    result_ARR = models.FloatField(default=None, blank=True, null=True)
-    result_GSTS2i = models.FloatField(default=None, blank=True, null=True)
-
-    def save(self, *args, **kwargs):
-        if self.final:
-            try:
-                res_obj = Result.objects.get(compound=self.compound)
-                setattr(res_obj, 'experiment_ARR', self)
-                res_obj.save()
-            except Result.DoesNotExist:
-                res_obj = Result.objects.create(
-                    compound=self.compound,
-                    experiment_ARR=self,
-                    )
-        super().save(*args, **kwargs)
-
-
-class Experiment_MLOGP(Experiment):
-    result_MLOGP = models.FloatField(default=None, blank=True, null=True)
-    result_Eta_beta = models.FloatField(default=None, blank=True, null=True)
-
-    def save(self, *args, **kwargs):
-        if self.final:
-            try:
-                res_obj = Result.objects.get(compound=self.compound)
-                setattr(res_obj, 'experiment_MLOGP', self)
-                res_obj.save()
-            except Result.DoesNotExist:
-                res_obj = Result.objects.create(
-                    compound=self.compound,
-                    experiment_MLOGP=self,
-                    )
-        super().save(*args, **kwargs)
-
-
-class Result(models.Model):
-    compound = models.ForeignKey(
-        Compound,
-        on_delete=models.CASCADE,
-        related_name='results_for_compounds',
-        default=None,
-        blank=True,
-        null=True,
-        unique=True
-        )
-    experiment_Sp = models.ForeignKey(
-        Experiment_Sp,
-        on_delete=models.SET_NULL,
-        related_name='results_of_experiment_Sp',
-        default=None,
-        blank=True,
-        null=True
-        )
-    experiment_ARR = models.ForeignKey(
-        Experiment_ARR,
-        on_delete=models.SET_NULL,
-        related_name='results_of_experiment_ARR',
-        default=None,
-        blank=True,
-        null=True
-        )
-    experiment_MLOGP = models.ForeignKey(
-        Experiment_MLOGP,
-        on_delete=models.SET_NULL,
-        related_name='results_of_experiment_MLOGP',
-        default=None,
-        blank=True,
-        null=True
-        )
-    comments = models.TextField(default="-")
-
-    def get_absolute_url(self):
-        return reverse(
-            'experiments:editResult'
-        )
-
-    def __str__(self):
-        return "_".join([
-            self.compound.name,
-            "result_id",
-            str(self.id)
-            ])
+experimental_results={
+    'Sp': 0,
+    'HyWi': 0,
+    'ARR': 0,
+    'GSTS2i': 0,
+    'MLOGP': 0,
+    'Eta_beta': 0,
+}

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Experiment, Result, Compound
+from .models import Experiment, Compound
 
 
 class ExperimentForm(forms.ModelForm):
@@ -17,24 +17,6 @@ class ExperimentForm(forms.ModelForm):
     experiment_date = forms.DateField(widget=forms.DateInput(attrs={
         'class': 'datetime-input'
         }))
-
-
-class ResultForm(forms.ModelForm):
-    class Meta:
-        model = Result
-        fields = (
-            "compound",
-            "experiment_Sp",
-            "experiment_Sp",
-            "experiment_MLOGP",
-            # "result_Sp",
-            # "result_HyWi",
-            # "result_ARR",
-            # "result_GSTS2i",
-            # "result_MLOGP",
-            # "result_Eta_beta",
-            "comments"
-        )
 
 
 class CompoundForm(forms.ModelForm):

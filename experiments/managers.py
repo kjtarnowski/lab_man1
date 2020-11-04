@@ -3,10 +3,10 @@ from django.contrib.auth.base_user import BaseUserManager
 
 class LabPersonManager(BaseUserManager):
    
-    def create_user(self, lab_name, lab_email, password, **extra_fields):
+    def create_user(self, name, lab_email, password, **extra_fields):
         
         user = self.model(
-            lab_name=lab_name,
+            name=name,
             lab_email=lab_email,
             **extra_fields
         )
@@ -14,7 +14,7 @@ class LabPersonManager(BaseUserManager):
         user.save()
         return user
 
-    def create_superuser(self, lab_name, lab_email, password, **extra_fields):
+    def create_superuser(self, name, lab_email, password, **extra_fields):
         """
         Create and save a SuperUser with the given email and password.
         """
@@ -26,4 +26,4 @@ class LabPersonManager(BaseUserManager):
             raise ValueError(_('Superuser must have is_staff=True.'))
         if extra_fields.get('is_superuser') is not True:
             raise ValueError(_('Superuser must have is_superuser=True.'))
-        return self.create_user(lab_name, lab_email, password, **extra_fields)
+        return self.create_user(name, lab_email, password, **extra_fields)

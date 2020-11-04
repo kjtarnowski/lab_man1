@@ -5,10 +5,10 @@ import io
 from django.contrib import messages
 from django.shortcuts import render
 
-from .filters import ExperimentFilter, CompoundFilter, ResultFilter
-from .forms import ExperimentForm, ResultForm, CompoundForm
-from .models import Experiment, Result, Compound, Project, ExperimentalSet, \
- Aparat, LabPerson, Experiment_Sp, Experiment_ARR, Experiment_MLOGP
+from .filters import ExperimentFilter, CompoundFilter
+from .forms import ExperimentForm, CompoundForm
+from .models import Experiment, Compound, Project, ExperimentalSet, \
+ Aparat, LabPerson
 
 
 def experiments_list(request):
@@ -36,26 +36,11 @@ def edit_experiment(request, experiment_id):
     )
 
 
-def results_list(request):
-    results_list = Result.objects.all()
-    tableFilter = ResultFilter(request.GET, queryset=results_list)
-    context = {'results': results_list, 'tableFilter': tableFilter}
-    return render(request, 'experiments/results_list.html', context)
-
-
-def edit_result(request, result_id):
-    result_instance = Result.objects.get(id=result_id)
-    if request.method == 'POST':
-        result_form = ResultForm(data=request.POST, instance=result_instance)
-        if result_form.is_valid():
-            result_form.save()
-    else:
-        result_form = ResultForm(instance=result_instance)
-    return render(
-        request,
-        'experiments/edit_result.html',
-        {'result_form': result_form}
-    )
+# def results_list(request):
+#     experiment_list = Experiment.objects.all()
+#     tableFilter = ExperimentFilter(request.GET, queryset=experiment_list)
+#     context = {'experiments': experiment_list, 'tableFilter': tableFilter}
+#     return render(request, 'experiments/result_list.html', context)
 
 
 def compound_list(request):
@@ -66,12 +51,11 @@ def compound_list(request):
 
 
 def edit_compound(request, compound_id):
-    compound_instance = Compound.objects.get(name=compound_id)
+    compound_instance = Compound.objects.get(id=compound_id)
     if request.method == 'POST':
         compound_form = CompoundForm(
             data=request.POST,
             instance=compound_instance)
-
         if compound_form.is_valid():
             compound_form.save()
     else:
@@ -92,20 +76,14 @@ def compounds_upload(request):
     data_set = csv_file.read().decode('UTF-8')
     io_string = io.StringIO(data_set)
     next(io_string)
-    compound_atrributes = [
-        "name",
-        "mass",
-        "monoisotopic_mass",
-        "formula",
-        "comments",
-        "project"
-        ]
     for column in csv.reader(io_string, delimiter=',', quotechar="|"):
         try:
             obj = Compound.objects.get(name=column[0])
-            for atrr_num in range(1, 5):
-                setattr(obj, compound_atrributes[atrr_num], column[atrr_num])
-            setattr(obj, compound_atrributes[5], Project.objects.filter(name=column[5])[0])
+            obj.mass = column[1]
+            obj.monoisotopic_mass = column[2]
+            obj.formula = column[3]
+            obj.comments = column[4]
+            obj.comments = column[5]
             obj.save()
         except Compound.DoesNotExist:
             Compound.objects.create(
@@ -133,30 +111,24 @@ def experiments_upload(request):
     io_string = io.StringIO(data_set)
     next(io_string)
     for column in csv.reader(io_string, delimiter=',', quotechar="|"):
-        if column[1] == "Sp":
-            Exp = Experiment_Sp
-        if column[1] == "ARR":
-            Exp = Experiment_ARR
-        if column[1] == "MLOGP":
-            Exp = Experiment_MLOGP
         try:
             exp_set_obj = ExperimentalSet.objects.get(name=column[3])
         except ExperimentalSet.DoesNotExist:
             exp_set_obj = ExperimentalSet.objects.create(name=column[3], experiment_date=datetime.strptime(column[2], '%Y-%m-%d').date())
         try:
-            obj = Exp.objects.get(
+            obj = Experiment.objects.get(
                 compound=Compound.objects.get(name=column[0]),
                 experimental_set=exp_set_obj
                 )
-            setattr(obj, 'experiment_date', datetime.strptime(column[2], '%Y-%m-%d').date())
-            setattr(obj, 'aparat', Aparat.objects.filter(name=column[4]))
-            setattr(obj, 'lab_person', LabPerson.objects.filter(name=column[5]))
-            setattr(obj, 'progress', column[6])
-            setattr(obj, 'final', bool(column[7]))
-            setattr(obj, 'comments', column[8])
+            obj.experiment_date = datetime.strptime(column[2], '%Y-%m-%d').date()
+            obj.aparat = Aparat.objects.filter(name=column[4])
+            obj.lab_person = LabPerson.objects.filter(name=column[5])
+            obj.progress = column[6]
+            obj.final = bool(column[7])
+            obj.comments = column[8]
             obj.save()
         except Experiment.DoesNotExist:
-            Exp.objects.create(
+            Experiment.objects.create(
                 compound=Compound.objects.get(name=column[0]),
                 experiment_date=datetime.strptime(column[2], '%Y-%m-%d').date(),
                 experimental_set=exp_set_obj,
@@ -166,81 +138,6 @@ def experiments_upload(request):
                 final=bool(column[7]),
                 comments=column[8]
             )
-    return render(
-        request,
-        "experiments/upload_experiments.html",
-        {}
-    )
-
-
-def experiments_upload_with_Sp_results(request):
-    if request.method == "GET":
-        return render(request, "experiments/upload_experiments.html", {})
-    csv_file = request.FILES['file']
-    if not csv_file.name.endswith('.csv'):
-        messages.error(request, 'THIS IS NOT A CSV FILE')
-    data_set = csv_file.read().decode('UTF-8')
-    io_string = io.StringIO(data_set)
-    next(io_string)
-    for column in csv.reader(io_string, delimiter=',', quotechar="|"):
-            obj = Experiment_Sp.objects.get(
-                compound=Compound.objects.get(name=column[0]),
-                experimental_set=ExperimentalSet.objects.get(name=column[3])
-                )
-            setattr(obj, 'comments', column[8])
-            setattr(obj, 'result_Sp', column[9])
-            setattr(obj, 'result_HyWi', column[10])
-            obj.save()
-    return render(
-        request,
-        "experiments/upload_experiments.html",
-        {}
-    )
-
-
-def experiments_upload_with_ARR_results(request):
-    if request.method == "GET":
-        return render(request, "experiments/upload_experiments.html", {})
-    csv_file = request.FILES['file']
-    if not csv_file.name.endswith('.csv'):
-        messages.error(request, 'THIS IS NOT A CSV FILE')
-    data_set = csv_file.read().decode('UTF-8')
-    io_string = io.StringIO(data_set)
-    next(io_string)
-    for column in csv.reader(io_string, delimiter=',', quotechar="|"):
-            obj = Experiment_ARR.objects.get(
-                compound=Compound.objects.get(name=column[0]),
-                experimental_set=ExperimentalSet.objects.get(name=column[3])
-                )
-            setattr(obj, 'comments', column[8])
-            setattr(obj, 'result_ARR', column[9])
-            setattr(obj, 'result_GSTS2i', column[10])
-            obj.save()
-    return render(
-        request,
-        "experiments/upload_experiments.html",
-        {}
-    )
-
-
-def experiments_upload_with_MLOGP_results(request):
-    if request.method == "GET":
-        return render(request, "experiments/upload_experiments.html", {})
-    csv_file = request.FILES['file']
-    if not csv_file.name.endswith('.csv'):
-        messages.error(request, 'THIS IS NOT A CSV FILE')
-    data_set = csv_file.read().decode('UTF-8')
-    io_string = io.StringIO(data_set)
-    next(io_string)
-    for column in csv.reader(io_string, delimiter=',', quotechar="|"):
-            obj = Experiment_MLOGP.objects.get(
-                compound=Compound.objects.get(name=column[0]),
-                experimental_set=ExperimentalSet.objects.get(name=column[3])
-                )
-            setattr(obj, 'comments', column[8])
-            setattr(obj, 'result_MLOGP', column[9])
-            setattr(obj, 'result_Eta_beta', column[10])
-            obj.save()
     return render(
         request,
         "experiments/upload_experiments.html",

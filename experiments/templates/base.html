@@ -32,22 +32,11 @@
             <a class="nav-link" href="{% url 'experiments:experimentList' %}">Experiment List</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'experiments:resultList' %}">Result List</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link" href="{% url 'experiments:uploadCompound' %}">Upload Compounds</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'experiments:uploadExperiment' %}">Upload Experiments</a>
           </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Upload Experiments Result</a>
-            <div class="dropdown-menu" aria-labelledby="dropdown01">
-              <a class="dropdown-item" href="{% url 'experiments:uploadExperimentSpresults' %}">Upload Sp results</a>
-              <a class="dropdown-item" href="{% url 'experiments:uploadExperimentARRresults' %}">Upload ARR results</a>
-              <a class="dropdown-item" href="{% url 'experiments:uploadExperimentMLOGPresults' %}">Upload MLOGP results</a>
-          </div>
-      </li>
         </ul>
       </div>
     </nav>
