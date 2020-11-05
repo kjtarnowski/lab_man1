@@ -56,7 +56,8 @@ class Compound(models.Model):
         Project,
         on_delete=models.CASCADE,
         related_name='compounds_of_the_project'
-        )
+    )
+    experimental_parameters = JSONField(blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -128,13 +129,13 @@ class Experiment(models.Model):
             self.compound.name,
             str(self.id)
             ])
-
-
-experimental_results={
-    'Sp': 0,
-    'HyWi': 0,
-    'ARR': 0,
-    'GSTS2i': 0,
-    'MLOGP': 0,
-    'Eta_beta': 0,
-}
+    
+    def save(self, *args, **kwargs):
+        if self.final and self.experimental_results:
+            compound = Compound.objects.get(name=self.compound)
+            if compound.experimental_parameters:
+                compound.experimental_parameters.update(self.experimental_results)
+            else:
+                compound.experimental_parameters = self.experimental_results
+            compound.save()
+        super().save(*args, **kwargs)

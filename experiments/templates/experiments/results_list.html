@@ -17,30 +17,14 @@
 	<table class="table table-sm">
 	<tr>
 	    <th>Compound</th>
-        <th>Experiment Sp</th>
-        <th>Experiment ARR</th>
-	    <th>Experiment MLOGP</th>
-	    <th>Result SP</th>
-	    <th>Result Hywi</th>
-        <th>Result ARR</th>
-        <th>Result GATS2i</th>
-		<th>Result MLOGP</th>
-        <th>Result Eta_beta</th>
-        <th>Commnents</th>
+        <th>Experiment Name</th>
+        <th>Experiment Result</th>
 	</tr>
-	{% for result_filter in tableFilter.qs %}
+	{% for experiment_filter in experiments %}
 	<tr>
-	    <td>{{result_filter.compound}}</td>
-        <td>{{result_filter.experiment_Sp}}</td>
-        <td>{{result_filter.experiment_ARR}}</td>
-        <td>{{result_filter.experiment_MLOGP}}</td>
-        <td>{{result_filter.experiment_Sp.result_Sp}}</td>
-        <td>{{result_filter.experiment_Sp.result_HyWi}}</td>
-        <td>{{result_filter.experiment_ARR.result_ARR}}</td>
-        <td>{{result_filter.experiment_ARR.result_GSTS2i}}</td>
-		<td>{{result_filter.experiment_MLOGP.result_MLOGP}}</td>
-        <td>{{result_filter.experiment_MLOGP.result_Eta_beta}}</td>
-        <td>{{result_filter.comments}}</td>
+	    <td>{{experiment_filter.compound}}</td>
+        <td>{{experiment_filter}}</td>
+        <td>{{experiment_filter.experimental_results}}</td>
 	</tr>
 	{% endfor %}
 	</table>

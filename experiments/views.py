@@ -36,11 +36,11 @@ def edit_experiment(request, experiment_id):
     )
 
 
-# def results_list(request):
-#     experiment_list = Experiment.objects.all()
-#     tableFilter = ExperimentFilter(request.GET, queryset=experiment_list)
-#     context = {'experiments': experiment_list, 'tableFilter': tableFilter}
-#     return render(request, 'experiments/result_list.html', context)
+def results_list(request):
+    experiment_list = Experiment.objects.all()
+    tableFilter = ExperimentFilter(request.GET, queryset=experiment_list)
+    context = {'experiments': experiment_list, 'tableFilter': tableFilter}
+    return render(request, 'experiments/results_list.html', context)
 
 
 def compound_list(request):
@@ -109,37 +109,61 @@ def experiments_upload(request):
         messages.error(request, 'THIS IS NOT A CSV FILE')
     data_set = csv_file.read().decode('UTF-8')
     io_string = io.StringIO(data_set)
-    next(io_string)
-    for column in csv.reader(io_string, delimiter=',', quotechar="|"):
-        try:
-            exp_set_obj = ExperimentalSet.objects.get(name=column[3])
-        except ExperimentalSet.DoesNotExist:
-            exp_set_obj = ExperimentalSet.objects.create(name=column[3], experiment_date=datetime.strptime(column[2], '%Y-%m-%d').date())
-        try:
-            obj = Experiment.objects.get(
-                compound=Compound.objects.get(name=column[0]),
-                experimental_set=exp_set_obj
+    # next(io_string)
+    for n, column in enumerate(csv.reader(io_string, delimiter=',', quotechar="|")):
+        if n == 0:
+            results_names = []
+            for i in range(9, len(column)):
+                if column[i]:
+                    results_names.append(column[i])
+        else:
+            try:
+                exp_set_obj = ExperimentalSet.objects.get(name=column[3])
+            except ExperimentalSet.DoesNotExist:
+                exp_set_obj = ExperimentalSet.objects.create(
+                    name=column[3],
+                    experiment_date=datetime.strptime(column[2], '%Y-%m-%d').date()
                 )
-            obj.experiment_date = datetime.strptime(column[2], '%Y-%m-%d').date()
-            obj.aparat = Aparat.objects.filter(name=column[4])
-            obj.lab_person = LabPerson.objects.filter(name=column[5])
-            obj.progress = column[6]
-            obj.final = bool(column[7])
-            obj.comments = column[8]
-            obj.save()
-        except Experiment.DoesNotExist:
-            Experiment.objects.create(
-                compound=Compound.objects.get(name=column[0]),
-                experiment_date=datetime.strptime(column[2], '%Y-%m-%d').date(),
-                experimental_set=exp_set_obj,
-                aparat=Aparat.objects.get(name=column[4]),
-                lab_person=LabPerson.objects.get(name=column[5]),
-                progress=column[6],
-                final=bool(column[7]),
-                comments=column[8]
-            )
+            try:
+                obj = Experiment.objects.get(
+                    compound=Compound.objects.get(name=column[0]),
+                    experimental_set=exp_set_obj
+                    )
+                obj.experiment_date = datetime.strptime(column[2], '%Y-%m-%d').date()
+                obj.aparat = Aparat.objects.filter(name=column[4]).get()
+                obj.lab_person = LabPerson.objects.filter(name=column[5]).get()
+                obj.progress = column[6]
+                obj.final = bool(column[7])
+                obj.comments = column[8]
+                experimental_results = {}
+                for n, result_name in enumerate(results_names):
+                    experimental_results[result_name] = float(column[9+n])
+                obj.experimental_results = experimental_results
+                obj.save()
+            except Experiment.DoesNotExist:
+                Experiment.objects.create(
+                    compound=Compound.objects.get(name=column[0]),
+                    experiment_date=datetime.strptime(column[2], '%Y-%m-%d').date(),
+                    experimental_set=exp_set_obj,
+                    aparat=Aparat.objects.get(name=column[4]),
+                    lab_person=LabPerson.objects.get(name=column[5]),
+                    progress=column[6],
+                    final=bool(column[7]),
+                    comments=column[8]
+                )
     return render(
         request,
         "experiments/upload_experiments.html",
         {}
     )
+
+
+
+experimental_results={
+    'Sp': 0,
+    'HyWi': 0,
+    'ARR': 0,
+    'GSTS2i': 0,
+    'MLOGP': 0,
+    'Eta_beta': 0,
+}

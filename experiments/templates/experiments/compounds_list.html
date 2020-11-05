@@ -21,6 +21,7 @@
         <th>Compound Monoisotopic Mass</th>
 	    <th>Compound Formula</th>
         <th>Commnents</th>
+		<th>Experimental parameters</th>
 	</tr>
 	{% for compound_filter in tableFilter.qs %}
 	<tr>
@@ -29,6 +30,7 @@
         <td>{{compound_filter.monoisotopic_mass}}</td>
         <td>{{compound_filter.formula}}</td>
         <td>{{compound_filter.comments}}</td>
+		<td>{{compound_filter.experimental_parameters}}</td>
         <td><a href="{% url 'experiments:editCompound' compound_filter.id %}">Edit compound</a></td>
 	</tr>
 	{% endfor %}
