@@ -2,7 +2,7 @@
 
 # Features:
 
-  - Storing informations about experiments:
+  - Storing information about experiments:
     - chemical compound
     - date
     - experiment type
@@ -11,7 +11,7 @@
     - experimental set
     - progress
   - Storing experimental results from different experiment types
-  - Uploding data in csv form:
+  - Uploading data in csv form:
     - information about compounds
     - planned experiments
     - results of the experiments

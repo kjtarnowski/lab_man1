@@ -135,7 +135,7 @@ class Experiment(models.Model):
     
     def save(self, *args, **kwargs):
         if self.final and self.experimental_results:
-            compound = Compound.objects.get(name=self.compound)
+            compound = Compound.objects.filter(name=self.compound).last()
             if compound.experimental_parameters:
                 compound.experimental_parameters.update(self.experimental_results)
             else:
