@@ -21,7 +21,12 @@
         <th>Compound Monoisotopic Mass</th>
 	    <th>Compound Formula</th>
         <th>Commnents</th>
-		<th>Experimental parameters</th>
+		<th>Sp</th>
+		<th>HyWi_Bm</th>
+		<th>ARR</th>
+		<th>GATS2i</th>
+		<th>MLOGP</th>
+		<th>Eta_betaP_A</th>
 	</tr>
 	{% for compound_filter in tableFilter.qs %}
 	<tr>
@@ -30,7 +35,12 @@
         <td>{{compound_filter.monoisotopic_mass}}</td>
         <td>{{compound_filter.formula}}</td>
         <td>{{compound_filter.comments}}</td>
-		<td>{{compound_filter.experimental_parameters}}</td>
+		<td>{{compound_filter.experimental_parameters.Sp}}</td>
+		<td>{{compound_filter.experimental_parameters.HyWi_Bm}}</td>
+		<td>{{compound_filter.experimental_parameters.ARR}}</td>
+		<td>{{compound_filter.experimental_parameters.GATS2i}}</td>
+		<td>{{compound_filter.experimental_parameters.MLOGP}}</td>
+		<td>{{compound_filter.experimental_parameters.Eta_betaP_A}}</td>
         <td><a href="{% url 'experiments:editCompound' compound_filter.id %}">Edit compound</a></td>
 	</tr>
 	{% endfor %}

@@ -8,7 +8,7 @@ from django.shortcuts import render
 from .filters import ExperimentFilter, CompoundFilter
 from .forms import ExperimentForm, CompoundForm
 from .models import Experiment, Compound, Project, ExperimentalSet, \
- Aparat, LabPerson
+ Aparat, LabPerson, ExperimentType
 
 
 def experiments_list(request):
@@ -135,7 +135,7 @@ def experiments_upload(request):
                 obj.progress = column[6]
                 obj.final = bool(column[7])
                 obj.comments = column[8]
-                experimental_results = {}
+                obj.exptype = ExperimentType.objects.get(name=column[1])
                 for n, result_name in enumerate(results_names):
                     experimental_results[result_name] = float(column[9+n])
                 obj.experimental_results = experimental_results
@@ -146,6 +146,7 @@ def experiments_upload(request):
                     experiment_date=datetime.strptime(column[2], '%Y-%m-%d').date(),
                     experimental_set=exp_set_obj,
                     aparat=Aparat.objects.get(name=column[4]),
+                    exptype=ExperimentType.objects.get(name=column[1]),
                     lab_person=LabPerson.objects.get(name=column[5]),
                     progress=column[6],
                     final=bool(column[7]),

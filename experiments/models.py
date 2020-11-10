@@ -34,6 +34,13 @@ class Aparat(models.Model):
         return self.name
 
 
+class ExperimentType(models.Model):
+    name = models.CharField(max_length=25)
+
+    def __str__(self):
+        return self.name
+
+
 class ExperimentalSet(models.Model):
     name = models.CharField(max_length=25)
     experiment_date = models.DateField(default=None, blank=True, null=True)
@@ -64,11 +71,6 @@ class Compound(models.Model):
 
 
 class Experiment(models.Model):
-    EXPTYPE_CHOICES = (
-        ("Sp", "Sp"),
-        ("ARR", "ARR"),
-        ("MLOGP", "MLOGP")
-    )
     PROGRESS_CHOICES = (
         ("TBD", "TBD"),
         ("ONGOING", "ONGOING"),
@@ -103,11 +105,12 @@ class Experiment(models.Model):
         choices=PROGRESS_CHOICES,
         default="TBD"
     )
-    exptype = models.CharField(
-        max_length=10,
-        choices=EXPTYPE_CHOICES,
-        default="Sp"
-    )
+    exptype = models.ForeignKey(
+        ExperimentType,
+        on_delete=models.CASCADE,
+        related_name='experiments_of_this_type',
+        blank=True, null=True, default=None
+        )
     final = models.BooleanField(default=False)
     experimental_results = JSONField(blank=True, null=True)
 

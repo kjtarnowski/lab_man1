@@ -1,9 +1,0 @@
-{% extends "base.html" %}
-
-{% block content %}
-    <form action="." method="post">
-    {{ result_form.as_p }}
-    {% csrf_token %}
-    <p><input type="submit" value="update result"></p>
-    </form>
-{% endblock %}
