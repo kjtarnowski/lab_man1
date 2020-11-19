@@ -132,6 +132,7 @@ def experiments_upload(request):
             obj.final = bool(column[7])
             obj.comments = column[8]
             obj.exptype = ExperimentType.objects.get(name=column[1])
+            experimental_results = {}
             for n, result_name in enumerate(results_names):
                 experimental_results[result_name] = float(column[9+n])
             obj.experimental_results = experimental_results
@@ -153,14 +154,3 @@ def experiments_upload(request):
         "experiments/upload_experiments.html",
         {}
     )
-
-
-
-experimental_results={
-    'Sp': 0,
-    'HyWi': 0,
-    'ARR': 0,
-    'GSTS2i': 0,
-    'MLOGP': 0,
-    'Eta_beta': 0,
-}
