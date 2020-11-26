@@ -18,9 +18,12 @@ from django.urls import path, include
 from .api import router
 from django.views.generic import TemplateView
 from rest_framework.schemas import get_schema_view
+from django.views.generic.base import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('', TemplateView.as_view(template_name='home.html'), name='home'),
     path('experiments/', include('experiments.urls', namespace='blog')),
     path('api/v1/', include(router.urls),),
     path('openapi/', get_schema_view(

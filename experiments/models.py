@@ -5,19 +5,16 @@ from django.contrib.auth.models import PermissionsMixin
 from django.utils import timezone
 from django.urls import reverse
 from django.contrib.postgres.fields import JSONField
+from django.contrib.auth.models import User
 
-from .managers import LabPersonManager
 
+class LabPerson(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    lab_name = models.CharField(max_length=50, unique=True)
+    lab_email = models.EmailField(default=None, blank=True, null=True)
 
-class LabPerson(AbstractBaseUser, PermissionsMixin):
-    name = models.CharField(max_length=50, unique=True)
-    lab_email = models.EmailField()
-    is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    date_joined = models.DateTimeField(default=timezone.now)
-    USERNAME_FIELD = 'name'
-    REQUIRED_FIELDS = ['lab_email']
-    objects = LabPersonManager()
+    def __str__(self):
+        return f"Lab Person {self.lab_name}"
 
 
 class Project(models.Model):

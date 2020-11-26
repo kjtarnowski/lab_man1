@@ -5,9 +5,9 @@ from .models import LabPerson, Experiment, Project, Aparat,  \
 
 @admin.register(LabPerson)
 class LabPersonAdmin(admin.ModelAdmin):
-    list_display = ("name", "date_joined", "is_staff", "is_active")
-    list_filter = ('name',)
-    search_fields = ('name',)
+    list_display = ("lab_name", )
+    list_filter = ('lab_name',)
+    search_fields = ('lab_name',)
 
 
 @admin.register(Experiment)

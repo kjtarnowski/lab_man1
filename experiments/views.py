@@ -4,6 +4,7 @@ import io
 
 from django.contrib import messages
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 from .filters import ExperimentFilter, CompoundFilter
 from .forms import ExperimentForm, CompoundForm
@@ -11,6 +12,7 @@ from .models import Experiment, Compound, Project, ExperimentalSet, \
  Aparat, LabPerson, ExperimentType
 
 
+@login_required
 def experiments_list(request):
     experiment_list = Experiment.objects.all()
     tableFilter = ExperimentFilter(request.GET, queryset=experiment_list)
@@ -18,6 +20,7 @@ def experiments_list(request):
     return render(request, 'experiments/experiments_list.html', context)
 
 
+@login_required
 def edit_experiment(request, experiment_id):
     experiment_instance = Experiment.objects.get(id=experiment_id)
     if request.method == 'POST':
@@ -36,6 +39,7 @@ def edit_experiment(request, experiment_id):
     )
 
 
+@login_required
 def results_list(request):
     experiment_list = Experiment.objects.all()
     tableFilter = ExperimentFilter(request.GET, queryset=experiment_list)
@@ -43,6 +47,7 @@ def results_list(request):
     return render(request, 'experiments/results_list.html', context)
 
 
+@login_required
 def compound_list(request):
     compound_list = Compound.objects.all()
     tableFilter = CompoundFilter(request.GET, queryset=compound_list)
@@ -50,6 +55,7 @@ def compound_list(request):
     return render(request, 'experiments/compounds_list.html', context)
 
 
+@login_required
 def edit_compound(request, compound_id):
     compound_instance = Compound.objects.get(id=compound_id)
     if request.method == 'POST':
@@ -67,6 +73,7 @@ def edit_compound(request, compound_id):
     )
 
 
+@login_required
 def compounds_upload(request):
     if request.method == "GET":
         return render(request, "experiments/upload_compounds.html", {})
@@ -101,6 +108,7 @@ def compounds_upload(request):
     )
 
 
+@login_required
 def experiments_upload(request):
     if request.method == "GET":
         return render(request, "experiments/upload_experiments.html", {})
@@ -127,7 +135,7 @@ def experiments_upload(request):
                 )
             obj.experiment_date = datetime.strptime(column[2], '%Y-%m-%d').date()
             obj.aparat = Aparat.objects.filter(name=column[4]).get()
-            obj.lab_person = LabPerson.objects.filter(name=column[5]).get()
+            obj.lab_person = LabPerson.objects.filter(lab_name=column[5]).get()
             obj.progress = column[6]
             obj.final = bool(column[7])
             obj.comments = column[8]
@@ -144,7 +152,7 @@ def experiments_upload(request):
                 experimental_set=exp_set_obj,
                 aparat=Aparat.objects.get(name=column[4]),
                 exptype=ExperimentType.objects.get(name=column[1]),
-                lab_person=LabPerson.objects.get(name=column[5]),
+                lab_person=LabPerson.objects.get(lab_name=column[5]),
                 progress=column[6],
                 final=bool(column[7]),
                 comments=column[8]
