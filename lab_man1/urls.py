@@ -16,10 +16,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from .api import router
+from django.views.generic import TemplateView
+from rest_framework.schemas import get_schema_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('experiments/', include('experiments.urls', namespace='blog')),
-    path('api/v1/', include(router.urls))
+    path('api/v1/', include(router.urls),),
+    path('openapi/', get_schema_view(
+        title="Lab Experiments management app",
+        description="API for experiments app"
+    ), name='openapi-schema'),
+    path('docs/', TemplateView.as_view(
+        template_name='documentation.html',
+        extra_context={'schema_url':'openapi-schema'}
+    ), name='swagger-ui')
 
 ]
