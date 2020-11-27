@@ -1,32 +1,31 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 from experiments.models import Compound, Project, Experiment, LabPerson, Aparat
 
 
 class CompoundModelsTestCase(TestCase):
-    def setUp(self):
-        self.project = Project.objects.create(name="abc_project")
-        self.lab_person = LabPerson.objects.create(
-            name="lab_person",
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.project = Project.objects.create(name="abc_project")
+        cls.user = get_user_model().objects.create_user(username='test', password='12test12', email='test@example.com')
+        cls.user.save()
+        cls.lab_person = LabPerson.objects.create(
+            user=cls.user,
+            lab_name="lab_person",
             lab_email="lab_person@admin.com"
         )
-        self.aparat = Aparat.objects.create(
+        cls.aparat = Aparat.objects.create(
             name="aparat",
         )
-        self.compound = Compound.objects.create(
+        cls.compound = Compound.objects.create(
             name="compound_test",
             mass=500,
             monoisotopic_mass=501,
             formula="C6H12O6",
-            project=self.project
+            project=cls.project
         )
-
-    def tearDown(self):
-        self.project.delete()
-        self.lab_person.delete()
-        self.aparat.delete()
-        self.compound.delete()
-
 
     def test_compound_creation(self):
         compound_from_db = Compound.objects.get(name="compound_test")

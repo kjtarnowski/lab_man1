@@ -1,10 +1,33 @@
 import csv
 import io
 
+from django.contrib.auth import get_user_model, authenticate
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from experiments.models import Compound, Project, Experiment, LabPerson, Aparat, ExperimentType
+
+
+class SigninTest(TestCase):
+
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(username='test', password='12test12', email='test@example.com')
+        self.user.save()
+
+    def tearDown(self):
+        self.user.delete()
+
+    def test_correct(self):
+        user = authenticate(username='test', password='12test12')
+        self.assertTrue((user is not None) and user.is_authenticated)
+
+    def test_wrong_username(self):
+        user = authenticate(username='wrong', password='12test12')
+        self.assertFalse(user is not None and user.is_authenticated)
+
+    def test_wrong_pssword(self):
+        user = authenticate(username='test', password='wrong')
+        self.assertFalse(user is not None and user.is_authenticated)
 
 
 class CompoundViewTestCase(TestCase):
@@ -12,10 +35,12 @@ class CompoundViewTestCase(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.project = Project.objects.create(name="abc_project")
+        cls.user = get_user_model().objects.create_user(username='test', password='12test12', email='test@example.com')
+        cls.user.save()
         cls.lab_person = LabPerson.objects.create(
-            name="lab_person",
+            user=cls.user,
+            lab_name="lab_person",
             lab_email="lab_person@admin.com"
-
         )
         cls.aparat = Aparat.objects.create(
             name="aparat",
@@ -37,16 +62,19 @@ class CompoundViewTestCase(TestCase):
         )
 
     def test_view_url_exists_at_desired_location(self):
+        login = self.client.login(username='test', password='12test12')
         response = self.client.get('/experiments/compoundList/')
         self.assertEqual(response.status_code, 200)
 
     def test_context_from_url_after_compound_model_creation(self):
+        login = self.client.login(username='test', password='12test12')
         response = self.client.get('/experiments/compoundList/')
         self.assertTrue(response.context['tableFilter'].qs[0].name == "compound_test")
         self.assertTrue(response.context['tableFilter'].qs[0].mass == 500)
         self.assertTrue(response.context['tableFilter'].qs[0].formula == "C6H12O6")
 
     def test_context_from_url_after_creation_experiment_and_subsequent_data_transfer_from_experiment_to_compound(self):
+        login = self.client.login(username='test', password='12test12')
         response = self.client.get('/experiments/compoundList/')
         self.assertTrue(response.context['tableFilter'].qs[0].experimental_parameters["Sp"] == 1.0)
         self.assertTrue(response.context['tableFilter'].qs[0].experimental_parameters["HyWi_Bm"] == 2.0)
@@ -57,6 +85,8 @@ class UploadCompoundViewTestCase(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.project = Project.objects.create(name="test_project")
+        cls.user = get_user_model().objects.create_user(username='test', password='12test12', email='test@example.com')
+        cls.user.save()
 
     def test_compounds_file_uploading_saving_to_compound_model(self):
         compound_name = "test_upload"
@@ -67,6 +97,7 @@ class UploadCompoundViewTestCase(TestCase):
 {compound_name},{compound_mass},{compound_monoisotopic_mass},{compound_formula},test,test_project'''
 
         csv_file = SimpleUploadedFile("file.csv", text.encode())
+        login = self.client.login(username='test', password='12test12')
         response = self.client.post('/experiments/uploadCompound', {'file': csv_file})
         compound_from_db = Compound.objects.get(name=compound_name)
         self.assertEqual(compound_from_db.mass, compound_mass)
@@ -79,10 +110,12 @@ class UploadExperimentsViewTestCase(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.project = Project.objects.create(name="abc_project")
+        cls.user = get_user_model().objects.create_user(username='test', password='12test12', email='test@example.com')
+        cls.user.save()
         cls.lab_person = LabPerson.objects.create(
-            name="lab_person",
+            user=cls.user,
+            lab_name="lab_person",
             lab_email="lab_person@admin.com"
-
         )
         cls.aparat = Aparat.objects.create(
             name="test_aparat",
@@ -104,6 +137,7 @@ class UploadExperimentsViewTestCase(TestCase):
 {compound_name},test_experiment_type,2020-10-01,test_experimental_set,test_aparat,lab_person,TBD,False,-,'''
 
         csv_file = SimpleUploadedFile("file.csv", text.encode())
+        login = self.client.login(username='test', password='12test12')
         response = self.client.post('/experiments/uploadExperiment', {'file': csv_file})
         compound_from_db = Compound.objects.get(name=compound_name)
         experiment_from_db = Experiment.objects.filter(compound=compound_from_db).last()
@@ -117,6 +151,7 @@ class UploadExperimentsViewTestCase(TestCase):
 {compound_name},test_experiment_type,2020-10-01,test_experimental_set,test_aparat,lab_person,TBD,False,-,'''
 
         csv_file = SimpleUploadedFile("file.csv", text.encode())
+        login = self.client.login(username='test', password='12test12')
         response = self.client.post('/experiments/uploadExperiment', {'file': csv_file})
 
         text_with_data = f'''compound,experiment_type,experiment_date,experimental_set,aparat,lab_person,progess,final,comments,Sp,HyWi_Bm

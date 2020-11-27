@@ -40,5 +40,5 @@ class CompoundSerializer(serializers.ModelSerializer):
 
 class ExperimentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Compound
+        model = models.Experiment
         fields = '__all__'

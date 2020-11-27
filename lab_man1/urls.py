@@ -25,7 +25,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
     path('experiments/', include('experiments.urls', namespace='blog')),
-    path('api/v1/', include(router.urls),),
+    path('api/v1/', include(router.urls)),
     path('openapi/', get_schema_view(
         title="Lab Experiments management app",
         description="API for experiments app"
