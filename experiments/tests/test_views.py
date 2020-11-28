@@ -137,7 +137,7 @@ class UploadExperimentsViewTestCase(TestCase):
 {compound_name},test_experiment_type,2020-10-01,test_experimental_set,test_aparat,lab_person,TBD,False,-,'''
 
         csv_file = SimpleUploadedFile("file.csv", text.encode())
-        login = self.client.login(username='test', password='12test12')
+        self.client.login(username='test', password='12test12')
         response = self.client.post('/experiments/uploadExperiment', {'file': csv_file})
         compound_from_db = Compound.objects.get(name=compound_name)
         experiment_from_db = Experiment.objects.filter(compound=compound_from_db).last()
