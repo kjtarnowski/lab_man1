@@ -5,8 +5,8 @@ from .models import Experiment, Compound
 
 
 class ExperimentFilter(django_filters.FilterSet):
-    compound = CharFilter(field_name='compound__name', lookup_expr='icontains')
-    comments = CharFilter(field_name='comments', lookup_expr='icontains')
+    compound = CharFilter(field_name="compound__name", lookup_expr="icontains")
+    comments = CharFilter(field_name="comments", lookup_expr="icontains")
 
     class Meta:
         model = Experiment
@@ -18,12 +18,13 @@ class ExperimentFilter(django_filters.FilterSet):
             "progress",
             "comments",
             "final",
-            "exptype"]
+            "exptype",
+        ]
 
 
 class CompoundFilter(django_filters.FilterSet):
-    comments = CharFilter(field_name='comments', lookup_expr='icontains')
-    name = CharFilter(field_name='name', lookup_expr='icontains')
+    comments = CharFilter(field_name="comments", lookup_expr="icontains")
+    name = CharFilter(field_name="name", lookup_expr="icontains")
 
     class Meta:
         model = Compound

@@ -21,18 +21,20 @@ from rest_framework.schemas import get_schema_view
 from django.views.generic.base import TemplateView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('', TemplateView.as_view(template_name='home.html'), name='home'),
-    path('experiments/', include('experiments.urls', namespace='blog')),
-    path('api/v1/', include(router.urls)),
-    path('openapi/', get_schema_view(
-        title="Lab Experiments management app",
-        description="API for experiments app"
-    ), name='openapi-schema'),
-    path('docs/', TemplateView.as_view(
-        template_name='documentation.html',
-        extra_context={'schema_url':'openapi-schema'}
-    ), name='swagger-ui')
-
+    path("admin/", admin.site.urls),
+    path("accounts/", include("django.contrib.auth.urls")),
+    path("", TemplateView.as_view(template_name="home.html"), name="home"),
+    path("experiments/", include("experiments.urls", namespace="blog")),
+    path("api/v1/", include(router.urls)),
+    path('api/v1/rest-auth/', include('rest_auth.urls')),
+    path(
+        "openapi/",
+        get_schema_view(title="Lab Experiments management app", description="API for experiments app"),
+        name="openapi-schema",
+    ),
+    path(
+        "docs/",
+        TemplateView.as_view(template_name="documentation.html", extra_context={"schema_url": "openapi-schema"}),
+        name="swagger-ui",
+    ),
 ]

@@ -1,13 +1,12 @@
 from django.contrib import admin
-from .models import LabPerson, Experiment, Project, Aparat,  \
- Compound, ExperimentalSet, ExperimentType
+from .models import LabPerson, Experiment, Project, Aparat, Compound, ExperimentalSet, ExperimentType
 
 
 @admin.register(LabPerson)
 class LabPersonAdmin(admin.ModelAdmin):
-    list_display = ("lab_name", )
-    list_filter = ('lab_name',)
-    search_fields = ('lab_name',)
+    list_display = ("lab_name",)
+    list_filter = ("lab_name",)
+    search_fields = ("lab_name",)
 
 
 @admin.register(Experiment)
@@ -23,23 +22,10 @@ class ExperimentAdmin(admin.ModelAdmin):
         "comments",
         "final",
         "exptype",
-        "experimental_results"
-        )
-    list_filter = (
-        "compound",
-        "experiment_date",
-        "experimental_set",
-        "lab_person",
-        "progress",
-        "final",
-        "exptype"
+        "experimental_results",
     )
-    search_fields = (
-        "compound",
-        "experimental_set",
-        "lab_person",
-        "progress"
-        )
+    list_filter = ("compound", "experiment_date", "experimental_set", "lab_person", "progress", "final", "exptype")
+    search_fields = ("compound", "experimental_set", "lab_person", "progress")
     # prepopulated_fields = {"slug": ("compound", "experiment_type")}
     # raw_id_fields = ("author", )
     date_hierarchy = "experiment_date"
@@ -80,4 +66,3 @@ class ExperimentalSetAdmin(admin.ModelAdmin):
 class ExperimentTypeSetAdmin(admin.ModelAdmin):
     list_display = ("name",)
     list_filter = ("name",)
-
