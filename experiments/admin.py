@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import LabPerson, Experiment, Project, Aparat, Compound, ExperimentalSet, ExperimentType
+from .models import LabPerson, Experiment, Project, Aparat, Compound, ExperimentalSet, ExperimentType, MLAlgorithm, MLRequest
 
 
 @admin.register(LabPerson)
@@ -24,7 +24,6 @@ class ExperimentAdmin(admin.ModelAdmin):
         "exptype",
         "experimental_results",
     )
-    list_filter = ("compound", "experiment_date", "experimental_set", "lab_person", "progress", "final", "exptype")
     search_fields = ("compound", "experimental_set", "lab_person", "progress")
     # prepopulated_fields = {"slug": ("compound", "experiment_type")}
     # raw_id_fields = ("author", )
@@ -44,25 +43,27 @@ class AparatAdmin(admin.ModelAdmin):
     list_filter = ("name",)
 
 
-# @admin.register(ExperimentType)
-# class ExperimentTypeAdmin(admin.ModelAdmin):
-#     list_display = ("experiment_name",)
-#     list_filter = ("experiment_name",)
-
-
 @admin.register(Compound)
 class CompoundTypeAdmin(admin.ModelAdmin):
     list_display = ("name", "mass", "formula", "project", "comments")
-    list_filter = ("name",)
+    list_filter = ("project",)
 
 
 @admin.register(ExperimentalSet)
 class ExperimentalSetAdmin(admin.ModelAdmin):
     list_display = ("name", "experiment_date")
-    list_filter = ("name",)
 
 
 @admin.register(ExperimentType)
 class ExperimentTypeSetAdmin(admin.ModelAdmin):
     list_display = ("name",)
-    list_filter = ("name",)
+
+
+@admin.register(MLAlgorithm)
+class MLAlgorithmAdmin(admin.ModelAdmin):
+    list_display = ("name", "description", "version", )
+
+
+@admin.register(MLRequest)
+class MLRequestAdmin(admin.ModelAdmin):
+    list_display = ("input_data", "full_response", "response", "feedback", "mlalgorithm")

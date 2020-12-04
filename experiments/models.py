@@ -1,8 +1,6 @@
-# import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
-from django.utils import timezone
 from django.urls import reverse
 from django.contrib.postgres.fields import JSONField
 from django.contrib.auth.models import User
@@ -106,3 +104,22 @@ class Experiment(models.Model):
                 compound.experimental_parameters = self.experimental_results
             compound.save()
         super().save(*args, **kwargs)
+
+
+class MLAlgorithm(models.Model):
+    name = models.CharField(max_length=128)
+    description = models.CharField(max_length=1000)
+    version = models.CharField(max_length=128)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class MLRequest(models.Model):
+    input_data = models.CharField(max_length=10000)
+    full_response = models.CharField(max_length=10000)
+    response = models.CharField(max_length=10000)
+    feedback = models.CharField(max_length=10000, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True)
+    mlalgorithm = models.ForeignKey(MLAlgorithm, on_delete=models.CASCADE)

@@ -5,6 +5,7 @@ import io
 from django.contrib import messages
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 
 from .filters import ExperimentFilter, CompoundFilter
 from .forms import ExperimentForm, CompoundForm
@@ -61,78 +62,80 @@ def edit_compound(request, compound_id):
 
 @login_required
 def compounds_upload(request):
-    if request.method == "GET":
+    if request.method == "POST":
+        csv_file = request.FILES["file"]
+        if not csv_file.name.endswith(".csv"):
+            messages.error(request, "THIS IS NOT A CSV FILE")
+        data_set = csv_file.read().decode("UTF-8")
+        io_string = io.StringIO(data_set)
+        next(io_string)
+        for column in csv.reader(io_string, delimiter=",", quotechar="|"):
+            try:
+                obj = Compound.objects.get(name=column[0])
+                obj.mass = column[1]
+                obj.monoisotopic_mass = column[2]
+                obj.formula = column[3]
+                obj.comments = column[4]
+                obj.comments = column[5]
+                obj.save()
+            except Compound.DoesNotExist:
+                Compound.objects.create(
+                    name=column[0],
+                    mass=column[1],
+                    monoisotopic_mass=column[2],
+                    formula=column[3],
+                    comments=column[4],
+                    project=Project.objects.filter(name=column[5])[0],
+                )
+        return redirect('experiments:compoundList')
+    else:
         return render(request, "experiments/upload_compounds.html", {})
-    csv_file = request.FILES["file"]
-    if not csv_file.name.endswith(".csv"):
-        messages.error(request, "THIS IS NOT A CSV FILE")
-    data_set = csv_file.read().decode("UTF-8")
-    io_string = io.StringIO(data_set)
-    next(io_string)
-    for column in csv.reader(io_string, delimiter=",", quotechar="|"):
-        try:
-            obj = Compound.objects.get(name=column[0])
-            obj.mass = column[1]
-            obj.monoisotopic_mass = column[2]
-            obj.formula = column[3]
-            obj.comments = column[4]
-            obj.comments = column[5]
-            obj.save()
-        except Compound.DoesNotExist:
-            Compound.objects.create(
-                name=column[0],
-                mass=column[1],
-                monoisotopic_mass=column[2],
-                formula=column[3],
-                comments=column[4],
-                project=Project.objects.filter(name=column[5])[0],
-            )
-    return render(request, "experiments/upload_compounds.html", {})
 
 
 @login_required
 def experiments_upload(request):
-    if request.method == "GET":
+    if request.method == "POST":
+        csv_file = request.FILES["file"]
+        if not csv_file.name.endswith(".csv"):
+            messages.error(request, "THIS IS NOT A CSV FILE")
+        data_set = csv_file.read().decode("UTF-8")
+        io_string = io.StringIO(data_set)
+        # next(io_string)
+        reader = csv.reader(io_string, delimiter=",", quotechar="|")
+        first_row = next(reader)
+        results_names = [first_row[x] for x in range(9, len(first_row))]
+        for n, column in enumerate(reader):
+            exp_set_obj = ExperimentalSet.objects.filter(name=column[3]).last()
+            if not exp_set_obj:
+                exp_set_obj = ExperimentalSet.objects.create(
+                    name=column[3], experiment_date=datetime.strptime(column[2], "%Y-%m-%d").date()
+                )
+            try:
+                obj = Experiment.objects.get(compound=Compound.objects.get(name=column[0]), experimental_set=exp_set_obj)
+                obj.experiment_date = datetime.strptime(column[2], "%Y-%m-%d").date()
+                obj.aparat = Aparat.objects.filter(name=column[4]).get()
+                obj.lab_person = LabPerson.objects.filter(lab_name=column[5]).get()
+                obj.progress = column[6]
+                obj.final = bool(column[7])
+                obj.comments = column[8]
+                obj.exptype = ExperimentType.objects.get(name=column[1])
+                experimental_results = {}
+                for n, result_name in enumerate(results_names):
+                    experimental_results[result_name] = float(column[9 + n])
+                obj.experimental_results = experimental_results
+                obj.save()
+            except Experiment.DoesNotExist:
+                Experiment.objects.create(
+                    compound=Compound.objects.get(name=column[0]),
+                    experiment_date=datetime.strptime(column[2], "%Y-%m-%d").date(),
+                    experimental_set=exp_set_obj,
+                    aparat=Aparat.objects.get(name=column[4]),
+                    exptype=ExperimentType.objects.get(name=column[1]),
+                    lab_person=LabPerson.objects.get(lab_name=column[5]),
+                    progress=column[6],
+                    final=bool(column[7]),
+                    comments=column[8],
+                )
+        return redirect('experiments:experimentList')
+    else:
         return render(request, "experiments/upload_experiments.html", {})
-    csv_file = request.FILES["file"]
-    if not csv_file.name.endswith(".csv"):
-        messages.error(request, "THIS IS NOT A CSV FILE")
-    data_set = csv_file.read().decode("UTF-8")
-    io_string = io.StringIO(data_set)
-    # next(io_string)
-    reader = csv.reader(io_string, delimiter=",", quotechar="|")
-    first_row = next(reader)
-    results_names = [first_row[x] for x in range(9, len(first_row))]
-    for n, column in enumerate(reader):
-        exp_set_obj = ExperimentalSet.objects.filter(name=column[3]).last()
-        if not exp_set_obj:
-            exp_set_obj = ExperimentalSet.objects.create(
-                name=column[3], experiment_date=datetime.strptime(column[2], "%Y-%m-%d").date()
-            )
-        try:
-            obj = Experiment.objects.get(compound=Compound.objects.get(name=column[0]), experimental_set=exp_set_obj)
-            obj.experiment_date = datetime.strptime(column[2], "%Y-%m-%d").date()
-            obj.aparat = Aparat.objects.filter(name=column[4]).get()
-            obj.lab_person = LabPerson.objects.filter(lab_name=column[5]).get()
-            obj.progress = column[6]
-            obj.final = bool(column[7])
-            obj.comments = column[8]
-            obj.exptype = ExperimentType.objects.get(name=column[1])
-            experimental_results = {}
-            for n, result_name in enumerate(results_names):
-                experimental_results[result_name] = float(column[9 + n])
-            obj.experimental_results = experimental_results
-            obj.save()
-        except Experiment.DoesNotExist:
-            Experiment.objects.create(
-                compound=Compound.objects.get(name=column[0]),
-                experiment_date=datetime.strptime(column[2], "%Y-%m-%d").date(),
-                experimental_set=exp_set_obj,
-                aparat=Aparat.objects.get(name=column[4]),
-                exptype=ExperimentType.objects.get(name=column[1]),
-                lab_person=LabPerson.objects.get(lab_name=column[5]),
-                progress=column[6],
-                final=bool(column[7]),
-                comments=column[8],
-            )
-    return render(request, "experiments/upload_experiments.html", {})
