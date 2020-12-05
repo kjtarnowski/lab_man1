@@ -20,12 +20,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "4-js)dd@@rcwk^!3-j2mnbje$a+x7b107tj0w&_+b@dhz@vcqf"
+SECRET_KEY = os.environ.get("SECRET_KEY", "4-js)dd@@rcwk^!3-j2mnbje$a+x7b107tj0w&_+b@dhz@vcqf")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = int(os.environ.get("DEBUG", default=True))
 
-ALLOWED_HOSTS = []
+try:
+    ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+except AttributeError:
+    ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -41,10 +44,12 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_auth',
     "rest_framework_swagger",
-    "experiments.apps.ExperimentsConfig",
     "django.contrib.postgres",
     "django_filters",
     "django_extensions",
+    #project apps
+    "experiments.apps.ExperimentsConfig",
+    "ml.apps.MLConfig"
 ]
 
 MIDDLEWARE = [
@@ -81,15 +86,18 @@ WSGI_APPLICATION = "lab_man1.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "lab_man1",
-        "USER": "lab_man1",
-        "PASSWORD": "django111",
-        "HOST": "localhost",
+        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.postgresql"),
+        "NAME": os.environ.get("SQL_DATABASE", "lab_man1"),
+        "USER": os.environ.get("SQL_USER", "lab_man1"),
+        "PASSWORD": os.environ.get("SQL_PASSWORD", "django111"),
+        "HOST": os.environ.get("SQL_HOST", "localhost"),
+        "PORT": os.environ.get("SQL_PORT", "5432"),
     }
 }
+
 
 
 # Password validation
@@ -144,3 +152,8 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ]
 }
+
+
+ARTIFACTS_PATH = "ml/activity_classifier/"
+ENCODERS_PATH = os.path.join(ARTIFACTS_PATH, "median_imputer.joblib")
+MODEL_PATH = os.path.join(ARTIFACTS_PATH, "CV_random_forest_classifier_best_estimator.joblib")

@@ -1,12 +1,25 @@
+from enum import Enum
+
 import joblib
 import pandas as pd
+
+from django.conf import settings
+
+
+class Label(Enum):
+    ACTIVE = "Active"
+    INACTIVE = "Inactive"
+
+
+class StatusChoice(Enum):
+    OK = "OK"
+    ERROR = "Error"
 
 
 class RandomForestClassifier:
     def __init__(self):
-        path_to_artifacts = "ml/activity_classifier/"
-        self.encoders = joblib.load(path_to_artifacts + "median_imputer.joblib")
-        self.model = joblib.load(path_to_artifacts + "CV_random_forest_classifier_best_estimator.joblib")
+        self.encoders = joblib.load(settings.ENCODERS_PATH)
+        self.model = joblib.load(settings.MODEL_PATH)
 
     def preprocessing(self, input_data):
         input_data = pd.DataFrame(input_data, index=[0])
@@ -17,16 +30,16 @@ class RandomForestClassifier:
         return self.model.predict_proba(input_data)
 
     def postprocessing(self, input_data):
-        label = "Inactive"
+        label = Label.INACTIVE.value
         if input_data[1] > 0.5:
-            label = "Active"
-        return {"probability": input_data[1], "label": label, "status": "OK"}
+            label = Label.ACTIVE.value
+        return {"probability": input_data[1], "label": label, "status": StatusChoice.OK.value}
 
-    def compute_prediction(self, input_data):
+    def compute_prediction(self, input_data):  # compute prediction for one sample
         try:
             input_data = self.preprocessing(input_data)
-            prediction = self.predict(input_data)[0]  #one sample
+            prediction = self.predict(input_data)[0]  # one sample
             prediction = self.postprocessing(prediction)
         except Exception as e:
-            return {"status": "Error", "message": str(e)}
+            return {"status": StatusChoice.ERROR.value, "message": str(e)}
         return prediction

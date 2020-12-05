@@ -40,7 +40,7 @@ The basic authentication for html templates and API is implemented.
     stage based on molecular descriptors) using machine learning algorithms.
 
 ![Blog list view](screenshots/predict.png)
-## Overview
+
 
     
 ## Technologies/libraries
