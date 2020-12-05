@@ -1,4 +1,4 @@
-from experiments.models import MLAlgorithm
+from ml.models import MLAlgorithm
 
 
 class MLRegistry:

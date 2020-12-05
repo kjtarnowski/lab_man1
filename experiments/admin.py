@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import LabPerson, Experiment, Project, Aparat, Compound, ExperimentalSet, ExperimentType, MLAlgorithm, MLRequest
+from .models import LabPerson, Experiment, Project, Aparat, Compound, ExperimentalSet, ExperimentType
 
 
 @admin.register(LabPerson)
@@ -58,12 +58,3 @@ class ExperimentalSetAdmin(admin.ModelAdmin):
 class ExperimentTypeSetAdmin(admin.ModelAdmin):
     list_display = ("name",)
 
-
-@admin.register(MLAlgorithm)
-class MLAlgorithmAdmin(admin.ModelAdmin):
-    list_display = ("name", "description", "version", )
-
-
-@admin.register(MLRequest)
-class MLRequestAdmin(admin.ModelAdmin):
-    list_display = ("input_data", "full_response", "response", "feedback", "mlalgorithm")

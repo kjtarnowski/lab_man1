@@ -15,18 +15,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.conf.urls import url
 from rest_framework.schemas import get_schema_view
 from django.views.generic.base import TemplateView
 
-from experiments.api_views import PredictView
+from ml.api_views import PredictView
 from .api import router
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("django.contrib.auth.urls")),
     path("", TemplateView.as_view(template_name="home.html"), name="home"),
-    path("experiments/", include("experiments.urls", namespace="blog")),
+    path("experiments/", include("experiments.urls", namespace="experiments")),
+    path("ml/", include("ml.urls", namespace="ml")),
     path("api/v1/", include(router.urls)),
     path("api/v1/predict/<str:algorithm_name>/<str:algorithm_version>", PredictView.as_view(), name="predict"),
     path('api/v1/rest-auth/', include('rest_auth.urls')),
