@@ -29,6 +29,7 @@
 		<th>GATS2i</th>
 		<th>MLOGP</th>
 		<th>Eta_betaP_A</th>
+        <th>Edit compound</th>
 	</tr>
 	{% for compound_filter in tableFilter.qs %}
 	<tr>
@@ -43,7 +44,7 @@
 		<td>{{compound_filter.experimental_parameters.GATS2i}}</td>
 		<td>{{compound_filter.experimental_parameters.MLOGP}}</td>
 		<td>{{compound_filter.experimental_parameters.Eta_betaP_A}}</td>
-        <td><a href="{% url 'experiments:editCompound' compound_filter.id %}">Edit compound</a></td>
+        <td><a href="{% url 'experiments:editCompound' compound_filter.id %}">Edit</a></td>
 	</tr>
 	{% endfor %}
 	</table>

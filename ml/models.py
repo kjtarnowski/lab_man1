@@ -20,7 +20,6 @@ class MLRequest(models.Model):
     input_data = models.CharField(max_length=10000)
     full_response = models.CharField(max_length=10000)
     response = models.CharField(max_length=10000)
-    feedback = models.CharField(max_length=10000, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     mlalgorithm = models.ForeignKey(MLAlgorithm, on_delete=models.CASCADE)
 

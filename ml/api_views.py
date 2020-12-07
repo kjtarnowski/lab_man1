@@ -38,7 +38,6 @@ class PredictView(views.APIView):
             input_data=json.dumps(request.data),
             full_response=prediction,
             response=label,
-            feedback="",
             mlalgorithm=algorithm,
         )
         ml_request.save()

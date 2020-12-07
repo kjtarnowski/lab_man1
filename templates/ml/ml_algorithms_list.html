@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}ML Algorithms list{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md">
+	<div class="card card-body">
+	<table class="table table-sm">
+	<tr>
+	    <th>Algorithm Name</th>
+        <th>Version</th>
+        <th>Algorithm Description</th>
+	    <th>Created at</th>
+        <th>Edit algorithm</th>
+	</tr>
+	{% for algorithm in algorithms %}
+	<tr>
+	    <td>{{algorithm.name}}</td>
+        <td>{{algorithm.version}}</td>
+        <td>{{algorithm.description}}</td>
+        <td>{{algorithm.created_at}}</td>
+        <td><a href="{% url 'ml:edit_ml_algorithm' algorithm.id %}">Edit</a></td>
+	</tr>
+	{% endfor %}
+	</table>
+	</div>
+	</div>
+</div>
+{% endblock content %}

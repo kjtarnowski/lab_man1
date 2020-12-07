@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}ML Request list{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md">
+	<div class="card card-body">
+	<table class="table table-sm">
+	<tr>
+	    <th>Input Data</th>
+        <th>Full Response</th>
+        <th>Response</th>
+	    <th>Created at</th>
+        <th>ML algorithm</th>
+	</tr>
+	{% for ml_request in ml_requests %}
+	<tr>
+	    <td>{{ml_request.input_data}}</td>
+        <td>{{ml_request.full_response}}</td>
+        <td>{{ml_request.response}}</td>
+        <td>{{ml_request.created_at}}</td>
+        <td>{{ml_request.mlalgorithm.name}}</td>
+	</tr>
+	{% endfor %}
+	</table>
+	</div>
+	</div>
+</div>
+{% endblock content %}

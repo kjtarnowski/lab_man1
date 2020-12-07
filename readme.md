@@ -18,7 +18,7 @@ The basic authentication for html templates and API is implemented.
     - monoisotopic mass
     - empirical parameters which describe properties of chemical compound (in development stage replaced by molecular descriptors)
      
-![Blog list view](screenshots/compound_list.png)
+![Blog list view](screenshots_for_readme/compound_list.png)
   - Storing experimental results from different experiment types:
     - chemical compound used in particular measurement
     - date of the experiment
@@ -29,17 +29,17 @@ The basic authentication for html templates and API is implemented.
     - progress
     - experimental data
       
-![Blog list view](screenshots/experiment_list.png)
+![Blog list view](screenshots_for_readme/experiment_list.png)
   - Uploading data in csv form:
     - information about compounds
     - planned experiments
     - results of the experiments
       
-![Blog list view](screenshots/upload_compoud.png)
+![Blog list view](screenshots_for_readme/upload_compoud.png)
   - Predicting compound properties based on experimental data (in development 
     stage based on molecular descriptors) using machine learning algorithms.
 
-![Blog list view](screenshots/predict.png)
+(screenshots_for_readme/predict.png)
 
 
     

@@ -9,4 +9,4 @@ class MLAlgorithmAdmin(admin.ModelAdmin):
 
 @admin.register(MLRequest)
 class MLRequestAdmin(admin.ModelAdmin):
-    list_display = ("input_data", "full_response", "response", "feedback", "mlalgorithm")
+    list_display = ("input_data", "full_response", "response", "mlalgorithm")

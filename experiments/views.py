@@ -13,7 +13,7 @@ from .models import Experiment, Compound, Project, ExperimentalSet, Aparat, LabP
 
 
 @login_required
-def experiments_list(request):
+def experiments_list_view(request):
     experiment_list = Experiment.objects.all()
     tableFilter = ExperimentFilter(request.GET, queryset=experiment_list)
     context = {"experiments": experiment_list, "tableFilter": tableFilter}
@@ -21,7 +21,7 @@ def experiments_list(request):
 
 
 @login_required
-def edit_experiment(request, experiment_id):
+def edit_experiment_view(request, experiment_id):
     experiment_instance = Experiment.objects.get(id=experiment_id)
     if request.method == "POST":
         experiment_form = ExperimentForm(data=request.POST, instance=experiment_instance)
@@ -33,7 +33,7 @@ def edit_experiment(request, experiment_id):
 
 
 @login_required
-def results_list(request):
+def results_list_view(request):
     experiment_list = Experiment.objects.all()
     tableFilter = ExperimentFilter(request.GET, queryset=experiment_list)
     context = {"experiments": experiment_list, "tableFilter": tableFilter}
@@ -41,7 +41,7 @@ def results_list(request):
 
 
 @login_required
-def compound_list(request):
+def compound_list_view(request):
     compound_list = Compound.objects.all()
     tableFilter = CompoundFilter(request.GET, queryset=compound_list)
     context = {"experiments": compound_list, "tableFilter": tableFilter}
@@ -49,7 +49,7 @@ def compound_list(request):
 
 
 @login_required
-def edit_compound(request, compound_id):
+def edit_compound_view(request, compound_id):
     compound_instance = Compound.objects.get(id=compound_id)
     if request.method == "POST":
         compound_form = CompoundForm(data=request.POST, instance=compound_instance)
@@ -61,7 +61,7 @@ def edit_compound(request, compound_id):
 
 
 @login_required
-def compounds_upload(request):
+def compounds_upload_view(request):
     if request.method == "POST":
         csv_file = request.FILES["file"]
         if not csv_file.name.endswith(".csv"):
@@ -93,7 +93,7 @@ def compounds_upload(request):
 
 
 @login_required
-def experiments_upload(request):
+def experiments_upload_view(request):
     if request.method == "POST":
         csv_file = request.FILES["file"]
         if not csv_file.name.endswith(".csv"):
