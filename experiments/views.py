@@ -4,7 +4,7 @@ import io
 
 from django.contrib import messages
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect
 
 from .filters import ExperimentFilter, CompoundFilter
@@ -49,6 +49,7 @@ def compound_list_view(request):
 
 
 @login_required
+@permission_required('is_staff')
 def edit_compound_view(request, compound_id):
     compound_instance = Compound.objects.get(id=compound_id)
     if request.method == "POST":
@@ -61,6 +62,7 @@ def edit_compound_view(request, compound_id):
 
 
 @login_required
+@permission_required('is_staff')
 def compounds_upload_view(request):
     if request.method == "POST":
         csv_file = request.FILES["file"]

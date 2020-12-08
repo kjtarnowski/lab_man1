@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 
 from ml.forms import MLAlgorithmForm
 from ml.models import MLAlgorithm, MLRequest
@@ -13,6 +13,7 @@ def ml_algorithm_list_view(request):
 
 
 @login_required
+@permission_required('is_staff')
 def add_algorithm_view(request):
     if request.method == 'POST':
         form = MLAlgorithmForm(request.POST)
@@ -31,6 +32,7 @@ def add_algorithm_view(request):
 
 
 @login_required
+@permission_required('is_staff')
 def edit_algorithm_view(request, algorithm_id):
     algorithm_instance = MLAlgorithm.objects.get(id=algorithm_id)
     if request.method == 'POST':

@@ -1,16 +1,31 @@
 import json
 from rest_framework import viewsets, views, status
+from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 
 from ml.models import MLAlgorithm, MLRequest
 from ml.serializers import MLAlgorithmSerializer, MLRequestSerializer
 from ml.activity_classifier.activity_classifier_with_basic_imputer import ActivityClassifier
 
-# from lab_man1.wsgi import registry
+
+SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS']
+
+
+class IsStaffOrReadOnly(BasePermission):
+    """
+    The request is authenticated as staff user, or is a read-only request form authenticated user.
+    """
+
+    def has_permission(self, request, view):
+        if request.user.is_staff or request.method in SAFE_METHODS and request.user.is_authenticated:
+            return True
+        return False
+
 
 class MLAlgorithmViewset(viewsets.ModelViewSet):
     queryset = MLAlgorithm.objects.all()
     serializer_class = MLAlgorithmSerializer
+    permission_classes = [IsStaffOrReadOnly]
 
 
 class MLRequestViewset(viewsets.ModelViewSet):
