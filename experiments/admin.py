@@ -25,8 +25,6 @@ class ExperimentAdmin(admin.ModelAdmin):
         "experimental_results",
     )
     search_fields = ("compound", "experimental_set", "lab_person", "progress")
-    # prepopulated_fields = {"slug": ("compound", "experiment_type")}
-    # raw_id_fields = ("author", )
     date_hierarchy = "experiment_date"
     ordering = ("experiment_date", "compound")
 
@@ -45,7 +43,7 @@ class AparatAdmin(admin.ModelAdmin):
 
 @admin.register(Compound)
 class CompoundTypeAdmin(admin.ModelAdmin):
-    list_display = ("name", "mass", "formula", "project", "comments")
+    list_display = ("name", "mass", "formula", "project", "comments", "smiles")
     list_filter = ("project",)
 
 

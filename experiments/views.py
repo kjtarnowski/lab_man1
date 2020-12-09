@@ -43,6 +43,7 @@ def results_list_view(request):
 @login_required
 def compound_list_view(request):
     compound_list = Compound.objects.all()
+    compound_smiles = Compound.objects.values_list('smiles', flat=True)
     tableFilter = CompoundFilter(request.GET, queryset=compound_list)
     context = {"experiments": compound_list, "tableFilter": tableFilter}
     return render(request, "experiments/compounds_list.html", context)
@@ -77,8 +78,9 @@ def compounds_upload_view(request):
                 obj.mass = column[1]
                 obj.monoisotopic_mass = column[2]
                 obj.formula = column[3]
-                obj.comments = column[4]
+                obj.project = column[4]
                 obj.comments = column[5]
+                obj.smiles = column[6]
                 obj.save()
             except Compound.DoesNotExist:
                 Compound.objects.create(
@@ -88,6 +90,7 @@ def compounds_upload_view(request):
                     formula=column[3],
                     comments=column[4],
                     project=Project.objects.filter(name=column[5])[0],
+                    smiles=column[6]
                 )
         return redirect('experiments:compoundList')
     else:

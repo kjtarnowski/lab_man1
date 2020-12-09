@@ -51,6 +51,7 @@ class Compound(models.Model):
     formula = models.CharField(max_length=50, blank=True, null=True, default=None)
     comments = models.TextField(default="-")
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="compounds_of_the_project")
+    smiles = models.CharField(max_length=200, blank=True, null=True, default=None)
     experimental_parameters = JSONField(blank=True, null=True)
 
     def __str__(self):
