@@ -1,6 +1,10 @@
 import csv
 from datetime import datetime
 import io
+import base64
+from io import BytesIO
+from rdkit import Chem
+from rdkit.Chem import Draw
 
 from django.contrib import messages
 from django.shortcuts import render
@@ -40,12 +44,22 @@ def results_list_view(request):
     return render(request, "experiments/results_list.html", context)
 
 
-@login_required
+#@login_required
 def compound_list_view(request):
     compound_list = Compound.objects.all()
     compound_smiles = Compound.objects.values_list('smiles', flat=True)
+    encoded_images = []
+    for smiles in compound_smiles:
+        molecule = Chem.MolFromSmiles(smiles)
+        Chem.rdDepictor.Compute2DCoords(molecule)
+        tmpfile = BytesIO()
+        image = Draw.MolToImage(molecule)
+        image.save(tmpfile, 'PNG')
+        encoded_image = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+        tmpfile.close()
+        encoded_images.append(encoded_image)
     tableFilter = CompoundFilter(request.GET, queryset=compound_list)
-    context = {"experiments": compound_list, "tableFilter": tableFilter}
+    context = {"experiments": compound_list, "tableFilter": tableFilter, "encoded_images": encoded_images}
     return render(request, "experiments/compounds_list.html", context)
 
 
@@ -62,8 +76,8 @@ def edit_compound_view(request, compound_id):
     return render(request, "experiments/edit_compound.html", {"compound_form": compound_form})
 
 
-@login_required
-@permission_required('is_staff')
+#@login_required
+#@permission_required('is_staff')
 def compounds_upload_view(request):
     if request.method == "POST":
         csv_file = request.FILES["file"]
