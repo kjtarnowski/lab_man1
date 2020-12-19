@@ -6,18 +6,18 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('experiments', '0003_mlalgorithm_mlrequest'),
+        ("experiments", "0003_mlalgorithm_mlrequest"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='mlrequest',
-            name='mlalgorithm',
+            model_name="mlrequest",
+            name="mlalgorithm",
         ),
         migrations.DeleteModel(
-            name='MLAlgorithm',
+            name="MLAlgorithm",
         ),
         migrations.DeleteModel(
-            name='MLRequest',
+            name="MLRequest",
         ),
     ]

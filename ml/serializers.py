@@ -1,14 +1,15 @@
 from rest_framework import serializers
-from . import models
+
+from ml.models import MLAlgorithm, MLRequest
 
 
 class MLAlgorithmSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.MLAlgorithm
+        model = MLAlgorithm
         fields = "__all__"
 
 
 class MLRequestSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.MLRequest
+        model = MLRequest
         fields = "__all__"

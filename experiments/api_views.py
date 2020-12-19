@@ -1,7 +1,6 @@
-import json
-from rest_framework import viewsets, views, status
-from rest_framework.permissions import BasePermission
+from rest_framework import viewsets
 
+from experiments.permissions import IsStaffOrReadOnly
 from experiments.models import Compound, Experiment, Project, Aparat, ExperimentType, ExperimentalSet, LabPerson
 from experiments.serializers import (
     CompoundSerializer,
@@ -10,22 +9,8 @@ from experiments.serializers import (
     AparatSerializer,
     ExperimentTypeSerializer,
     ExperimentalSetSerializer,
-    LabPersonSerializer
+    LabPersonSerializer,
 )
-
-SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS']
-
-
-class IsStaffOrReadOnly(BasePermission):
-    """
-    The request is authenticated as staff user, or is a read-only request form authenticated user.
-    """
-
-    def has_permission(self, request, view):
-        if request.user.is_staff or request.method in SAFE_METHODS and request.user.is_authenticated:
-            return True
-        return False
-
 
 
 class LabPersonViewset(viewsets.ModelViewSet):

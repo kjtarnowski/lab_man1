@@ -1,8 +1,6 @@
 from django.contrib.auth import get_user_model
-from django.test import TestCase
 from rest_framework.test import APITestCase
 
-from ml.activity_classifier.activity_classifier_with_basic_imputer import ActivityClassifier
 from experiments.models import Project
 
 
@@ -24,11 +22,11 @@ class MLPredictApiViewsTest(APITestCase):
             "Eta_betaP_A": "0.909",
             "nRNR2": "0",
             "F01[C - N]": "0",
-            "MLOGP": "6.1"
+            "MLOGP": "6.1",
         }
         classifier_url = "/api/v1/predict/random_forest/0.0.1"
-        self.client.login(username='test', password='12test12')
-        response = self.client.post(classifier_url, input_data, format='json')
+        self.client.login(username="test", password="12test12")
+        response = self.client.post(classifier_url, input_data, format="json")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["label"], "Active")
         self.assertTrue("request_id" in response.data)

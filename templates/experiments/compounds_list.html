@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="row">
-    <div class="col">
+    <div class="col-md-12">
 	<div class="card card-body">
 	<form method="get">
            {{tableFilter.form}}
@@ -14,10 +14,10 @@
 	</div>
     </div>
 </div>
-<div class="row">
-	<div class="col-md">
+<div class="row>
+	<div class="col-md-12">
 	<div class="card card-body">
-	<table class="table table-sm">
+	<table class="table table-md">
 	<tr>
         <th>Compound Structure</th>
 	    <th>Compound Name</th>
@@ -36,7 +36,7 @@
 	{% for compound_filter in tableFilter.qs %}
 	<tr>
         {% with forloop.counter0 as num %}
-        <td><img src="data:image/png;base64,{{ encoded_images|index:num }}"></td>
+        <td><img src="data:image/png;base64,{{ encoded_images|index:num }}" alt="structure not available"></td>
         {% endwith %}
 	    <td>{{compound_filter.name}}</td>
         <td>{{compound_filter.mass}}</td>

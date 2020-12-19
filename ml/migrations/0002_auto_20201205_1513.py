@@ -6,22 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ml', '0001_initial'),
+        ("ml", "0001_initial"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='mlalgorithm',
-            name='joblib_binary_file',
+            model_name="mlalgorithm",
+            name="joblib_binary_file",
         ),
         migrations.AddField(
-            model_name='mlalgorithm',
-            name='joblib_binary_file_algorithm',
+            model_name="mlalgorithm",
+            name="joblib_binary_file_algorithm",
             field=models.BinaryField(blank=True, default=None, editable=True, null=True),
         ),
         migrations.AddField(
-            model_name='mlalgorithm',
-            name='joblib_binary_file_encoders',
+            model_name="mlalgorithm",
+            name="joblib_binary_file_encoders",
             field=models.BinaryField(blank=True, default=None, editable=True, null=True),
         ),
     ]

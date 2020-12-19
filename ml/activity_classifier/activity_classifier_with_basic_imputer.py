@@ -1,7 +1,8 @@
 from io import BytesIO
 from enum import Enum
-import joblib
+
 import pandas as pd
+import joblib
 
 
 class Label(Enum):

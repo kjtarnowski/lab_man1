@@ -2,14 +2,22 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
+
 from experiments.models import Compound, Project, Experiment, LabPerson, Aparat, ExperimentType
 from experiments.serializers import CompoundSerializer, ExperimentSerializer
+
+
+SUPERUSER_NAME = "test"
+SUPERUSER_PASSWORD = "12test12"
+SUPERUSER_EMAIL = "test@example.com"
 
 
 class CompoundApiViewsTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = get_user_model().objects.create_user(username="test", password="12test12", email="test@example.com")
+        cls.user = get_user_model().objects.create_superuser(username=SUPERUSER_NAME,
+                                                             password=SUPERUSER_PASSWORD,
+                                                             email=SUPERUSER_EMAIL)
         cls.user.save()
         cls.project = Project.objects.create(name="test_project")
         cls.aparat = Aparat.objects.create(
@@ -35,7 +43,7 @@ class CompoundApiViewsTest(APITestCase):
         cls.compound = cls.compounds[0]
 
     def test_can_browse_all_compounds(self):
-        self.client.login(username='test', password='12test12')
+        self.client.login(username=SUPERUSER_NAME, password=SUPERUSER_PASSWORD )
         response = self.client.get(reverse("compound-list"))
 
         self.assertEquals(status.HTTP_200_OK, response.status_code)
@@ -45,7 +53,7 @@ class CompoundApiViewsTest(APITestCase):
             self.assertIn(CompoundSerializer(instance=compound).data, response.data)
 
     def test_can_read_a_specific_compound(self):
-        self.client.login(username='test', password='12test12')
+        self.client.login(username=SUPERUSER_NAME, password=SUPERUSER_PASSWORD )
         response = self.client.get(reverse("compound-detail", args=[self.compound.id]))
 
         self.assertEquals(status.HTTP_200_OK, response.status_code)
@@ -63,7 +71,7 @@ class CompoundApiViewsTest(APITestCase):
             "project": self.project.id,
         }
 
-        self.client.login(username='test', password='12test12')
+        self.client.login(username=SUPERUSER_NAME, password=SUPERUSER_PASSWORD )
         response = self.client.post(reverse("compound-list"), payload)
         created_compound = Compound.objects.get(name=payload["name"])
 
@@ -86,7 +94,7 @@ class CompoundApiViewsTest(APITestCase):
 
         payload = {"formula": "C6H5NH2", "comments": "modified"}
 
-        self.client.login(username='test', password='12test12')
+        self.client.login(username=SUPERUSER_NAME, password=SUPERUSER_PASSWORD )
         response = self.client.patch(reverse("compound-detail", args=[compound.id]), data=payload, format="json")
 
         compound.refresh_from_db()
@@ -97,7 +105,7 @@ class CompoundApiViewsTest(APITestCase):
             self.assertEquals(v, getattr(compound, k))
 
     def test_can_delete_a_compound(self):
-        self.client.login(username='test', password='12test12')
+        self.client.login(username=SUPERUSER_NAME, password=SUPERUSER_PASSWORD )
         response = self.client.delete(reverse("compound-detail", args=[self.compound.id]))
 
         self.assertEquals(status.HTTP_204_NO_CONTENT, response.status_code)
@@ -108,7 +116,9 @@ class ExperimentApiViewsTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.project = Project.objects.create(name="test_project")
-        cls.user = get_user_model().objects.create_user(username="test", password="12test12", email="test@example.com")
+        cls.user = get_user_model().objects.create_superuser(username=SUPERUSER_NAME,
+                                                             password=SUPERUSER_PASSWORD,
+                                                             email=SUPERUSER_EMAIL)
         cls.user.save()
         cls.lab_person = LabPerson.objects.create(
             user=cls.user, lab_name="lab_person", lab_email="lab_person@admin.com"
@@ -145,7 +155,7 @@ class ExperimentApiViewsTest(APITestCase):
         cls.experiment = cls.experiments[0]
 
     def test_can_browse_all_experiments(self):
-        self.client.login(username='test', password='12test12')
+        self.client.login(username=SUPERUSER_NAME, password=SUPERUSER_PASSWORD )
         response = self.client.get(reverse("experiment-list"))
 
         self.assertEquals(status.HTTP_200_OK, response.status_code)
@@ -155,7 +165,7 @@ class ExperimentApiViewsTest(APITestCase):
             self.assertIn(ExperimentSerializer(instance=experiment).data, response.data)
 
     def test_can_read_a_specific_experiment(self):
-        self.client.login(username='test', password='12test12')
+        self.client.login(username=SUPERUSER_NAME, password=SUPERUSER_PASSWORD )
         response = self.client.get(reverse("experiment-detail", args=[self.experiment.id]))
 
         self.assertEquals(status.HTTP_200_OK, response.status_code)
@@ -175,7 +185,7 @@ class ExperimentApiViewsTest(APITestCase):
             "exptype": self.experiment_type.id,
         }
 
-        self.client.login(username='test', password='12test12')
+        self.client.login(username=SUPERUSER_NAME, password=SUPERUSER_PASSWORD )
         response = self.client.post(reverse("experiment-list"), payload, format="json")
         created_experiment = Experiment.objects.get(id=payload["id"])
 
@@ -198,7 +208,7 @@ class ExperimentApiViewsTest(APITestCase):
 
         payload = {"comments": "modified", "progress": "UC"}
 
-        self.client.login(username='test', password='12test12')
+        self.client.login(username=SUPERUSER_NAME, password=SUPERUSER_PASSWORD )
         response = self.client.patch(reverse("experiment-detail", args=[experiment.id]), data=payload, format="json")
 
         experiment.refresh_from_db()
@@ -209,9 +219,8 @@ class ExperimentApiViewsTest(APITestCase):
             self.assertEquals(v, getattr(experiment, k))
 
     def test_can_delete_a_experiment(self):
-        self.client.login(username='test', password='12test12')
+        self.client.login(username=SUPERUSER_NAME, password=SUPERUSER_PASSWORD )
         response = self.client.delete(reverse("experiment-detail", args=[self.experiment.id]))
 
         self.assertEquals(status.HTTP_204_NO_CONTENT, response.status_code)
         self.assertFalse(Experiment.objects.filter(pk=self.experiment.id))
-

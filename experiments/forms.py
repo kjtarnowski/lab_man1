@@ -1,5 +1,6 @@
 from django import forms
-from .models import Experiment, Compound
+
+from experiments.models import Experiment, Compound
 
 
 class ExperimentForm(forms.ModelForm):

@@ -1,25 +1,12 @@
 import json
+
 from rest_framework import viewsets, views, status
-from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 
+from experiments.permissions import IsStaffOrReadOnly
 from ml.models import MLAlgorithm, MLRequest
 from ml.serializers import MLAlgorithmSerializer, MLRequestSerializer
 from ml.activity_classifier.activity_classifier_with_basic_imputer import ActivityClassifier
-
-
-SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS']
-
-
-class IsStaffOrReadOnly(BasePermission):
-    """
-    The request is authenticated as staff user, or is a read-only request form authenticated user.
-    """
-
-    def has_permission(self, request, view):
-        if request.user.is_staff or request.method in SAFE_METHODS and request.user.is_authenticated:
-            return True
-        return False
 
 
 class MLAlgorithmViewset(viewsets.ModelViewSet):
@@ -43,10 +30,10 @@ class PredictView(views.APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        algorithm_object = ActivityClassifier(encoders=algorithm.joblib_binary_file_encoders,
-                                              model=algorithm.joblib_binary_file_algorithm)
+        algorithm_object = ActivityClassifier(
+            encoders=algorithm.joblib_binary_file_encoders, model=algorithm.joblib_binary_file_algorithm
+        )
         prediction = algorithm_object.compute_prediction_for_one_sample(request.data)
-
 
         label = prediction["label"] if "label" in prediction else "error"
         ml_request = MLRequest(

@@ -1,28 +1,35 @@
 from django.contrib.auth import get_user_model, authenticate
-from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import TestCase
 
 from experiments.models import Compound, Project, Experiment, LabPerson, Aparat, ExperimentType
 
 
+SUPERUSER_NAME = "test"
+SUPERUSER_PASSWORD = "12test12"
+SUPERUSER_EMAIL = "test@example.com"
+
+
 class SigninTest(TestCase):
     def setUp(self):
-        self.user = get_user_model().objects.create_user(username="test", password="12test12", email="test@example.com")
+        self.user = get_user_model().objects.create_user(username=SUPERUSER_NAME,
+                                                         password=SUPERUSER_PASSWORD,
+                                                         email=SUPERUSER_EMAIL)
         self.user.save()
 
     def tearDown(self):
         self.user.delete()
 
     def test_correct(self):
-        user = authenticate(username="test", password="12test12")
+        user = authenticate(username=SUPERUSER_NAME, password=SUPERUSER_PASSWORD)
         self.assertTrue((user is not None) and user.is_authenticated)
 
     def test_wrong_username(self):
-        user = authenticate(username="wrong", password="12test12")
+        user = authenticate(username="wrong", password=SUPERUSER_PASSWORD)
         self.assertFalse(user is not None and user.is_authenticated)
 
     def test_wrong_pssword(self):
-        user = authenticate(username="test", password="wrong")
+        user = authenticate(username=SUPERUSER_NAME, password="wrong")
         self.assertFalse(user is not None and user.is_authenticated)
 
 
@@ -31,7 +38,9 @@ class CompoundViewTestCase(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.project = Project.objects.create(name="abc_project")
-        cls.user = get_user_model().objects.create_user(username="test", password="12test12", email="test@example.com")
+        cls.user = get_user_model().objects.create_superuser(username=SUPERUSER_NAME,
+                                                             password=SUPERUSER_PASSWORD,
+                                                             email=SUPERUSER_EMAIL)
         cls.user.save()
         cls.lab_person = LabPerson.objects.create(
             user=cls.user, lab_name="lab_person", lab_email="lab_person@admin.com"
@@ -48,7 +57,7 @@ class CompoundViewTestCase(TestCase):
         )
 
     def test_context_from_url_after_compound_model_creation(self):
-        self.client.login(username="test", password="12test12")
+        self.client.login(username=SUPERUSER_NAME, password=SUPERUSER_PASSWORD)
         response = self.client.get("/experiments/compoundList/")
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.context["tableFilter"].qs[0].name == "compound_test")
@@ -56,7 +65,7 @@ class CompoundViewTestCase(TestCase):
         self.assertTrue(response.context["tableFilter"].qs[0].formula == "C6H12O6")
 
     def test_context_from_url_after_creation_experiment_and_subsequent_data_transfer_from_experiment_to_compound(self):
-        self.client.login(username="test", password="12test12")
+        self.client.login(username=SUPERUSER_NAME, password=SUPERUSER_PASSWORD)
         response = self.client.get("/experiments/compoundList/")
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.context["tableFilter"].qs[0].experimental_parameters["Sp"] == 1.0)
@@ -68,7 +77,9 @@ class UploadCompoundViewTestCase(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.project = Project.objects.create(name="test_project")
-        cls.user = get_user_model().objects.create_user(username="test", password="12test12", email="test@example.com")
+        cls.user = get_user_model().objects.create_superuser(username=SUPERUSER_NAME,
+                                                             password=SUPERUSER_PASSWORD,
+                                                             email=SUPERUSER_EMAIL)
         cls.user.save()
 
     def test_compounds_file_uploading_saving_to_compound_model(self):
@@ -80,9 +91,9 @@ class UploadCompoundViewTestCase(TestCase):
 {compound_name},{compound_mass},{compound_monoisotopic_mass},{compound_formula},test,test_project"""
 
         csv_file = SimpleUploadedFile("file.csv", text.encode())
-        self.client.login(username="test", password="12test12")
+        self.client.login(username=SUPERUSER_NAME, password=SUPERUSER_PASSWORD)
         response = self.client.post("/experiments/uploadCompound", {"file": csv_file})
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 301)
         compound_from_db = Compound.objects.get(name=compound_name)
         self.assertEqual(compound_from_db.mass, compound_mass)
         self.assertEqual(compound_from_db.monoisotopic_mass, compound_monoisotopic_mass)
@@ -94,7 +105,9 @@ class UploadExperimentsViewTestCase(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.project = Project.objects.create(name="abc_project")
-        cls.user = get_user_model().objects.create_user(username="test", password="12test12", email="test@example.com")
+        cls.user = get_user_model().objects.create_superuser(username=SUPERUSER_NAME,
+                                                             password=SUPERUSER_PASSWORD,
+                                                             email=SUPERUSER_EMAIL)
         cls.user.save()
         cls.lab_person = LabPerson.objects.create(
             user=cls.user, lab_name="lab_person", lab_email="lab_person@admin.com"
@@ -115,9 +128,9 @@ class UploadExperimentsViewTestCase(TestCase):
 {compound_name},test_experiment_type,2020-10-01,test_experimental_set,test_aparat,lab_person,TBD,False,-,"""
 
         csv_file = SimpleUploadedFile("file.csv", text.encode())
-        self.client.login(username="test", password="12test12")
+        self.client.login(username=SUPERUSER_NAME, password=SUPERUSER_PASSWORD)
         response = self.client.post("/experiments/uploadExperiment", {"file": csv_file})
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 301)
         compound_from_db = Compound.objects.get(name=compound_name)
         experiment_from_db = Experiment.objects.filter(compound=compound_from_db).last()
         self.assertEqual(experiment_from_db.exptype.name, "test_experiment_type")
@@ -130,16 +143,16 @@ class UploadExperimentsViewTestCase(TestCase):
 {compound_name},test_experiment_type,2020-10-01,test_experimental_set,test_aparat,lab_person,TBD,False,-,"""
 
         csv_file = SimpleUploadedFile("file.csv", text.encode())
-        self.client.login(username="test", password="12test12")
+        self.client.login(username=SUPERUSER_NAME, password=SUPERUSER_PASSWORD)
         response = self.client.post("/experiments/uploadExperiment", {"file": csv_file})
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 301)
 
         text_with_data = f"""compound,experiment_type,experiment_date,experimental_set,aparat,lab_person,progess,final,comments,Sp,HyWi_Bm
 {compound_name},test_experiment_type,2020-10-01,test_experimental_set,test_aparat,lab_person,TBD,False,-,1,2"""
 
         csv_file_with_data = SimpleUploadedFile("file.csv", text_with_data.encode())
         response = self.client.post("/experiments/uploadExperiment", {"file": csv_file_with_data})
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 301)
 
         compound_from_db = Compound.objects.get(name=compound_name)
         experiment_from_db = Experiment.objects.filter(compound=compound_from_db).last()

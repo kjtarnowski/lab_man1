@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import LabPerson, Experiment, Project, Aparat, Compound, ExperimentalSet, ExperimentType
+
+from experiments.models import LabPerson, Experiment, Project, Aparat, Compound, ExperimentalSet, ExperimentType
 
 
 @admin.register(LabPerson)
@@ -55,4 +56,3 @@ class ExperimentalSetAdmin(admin.ModelAdmin):
 @admin.register(ExperimentType)
 class ExperimentTypeSetAdmin(admin.ModelAdmin):
     list_display = ("name",)
-

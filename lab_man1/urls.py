@@ -14,9 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+
+from django.views.generic.base import TemplateView
 from django.urls import path, include
 from rest_framework.schemas import get_schema_view
-from django.views.generic.base import TemplateView
 
 from ml.api_views import PredictView
 from .api import router
@@ -29,7 +30,7 @@ urlpatterns = [
     path("ml/", include("ml.urls", namespace="ml")),
     path("api/v1/", include(router.urls)),
     path("api/v1/predict/<str:algorithm_name>/<str:algorithm_version>", PredictView.as_view(), name="predict"),
-    path('api/v1/rest-auth/', include('rest_auth.urls')),
+    path("api/v1/rest-auth/", include("rest_auth.urls")),
     path(
         "openapi/",
         get_schema_view(title="Lab Experiments management app", description="API for experiments app"),

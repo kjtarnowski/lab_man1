@@ -1,10 +1,10 @@
 import django_filters
-from django_filters import CharFilter
+from django_filters import CharFilter, FilterSet
 
-from .models import Experiment, Compound
+from experiments.models import Experiment, Compound
 
 
-class ExperimentFilter(django_filters.FilterSet):
+class ExperimentFilter(FilterSet):
     compound = CharFilter(field_name="compound__name", lookup_expr="icontains")
     comments = CharFilter(field_name="comments", lookup_expr="icontains")
 
@@ -22,7 +22,7 @@ class ExperimentFilter(django_filters.FilterSet):
         ]
 
 
-class CompoundFilter(django_filters.FilterSet):
+class CompoundFilter(FilterSet):
     comments = CharFilter(field_name="comments", lookup_expr="icontains")
     name = CharFilter(field_name="name", lookup_expr="icontains")
 

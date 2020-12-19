@@ -1,15 +1,13 @@
+import base64
 import csv
 from datetime import datetime
-import io
-import base64
-from io import BytesIO
-from rdkit import Chem
-from rdkit.Chem import Draw
+from io import BytesIO, StringIO
 
 from django.contrib import messages
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
+from rdkit import Chem
+from rdkit.Chem import Draw
 
 from .filters import ExperimentFilter, CompoundFilter
 from .forms import ExperimentForm, CompoundForm
@@ -44,27 +42,30 @@ def results_list_view(request):
     return render(request, "experiments/results_list.html", context)
 
 
-#@login_required
+@login_required
 def compound_list_view(request):
     compound_list = Compound.objects.all()
-    compound_smiles = Compound.objects.values_list('smiles', flat=True)
+    compound_smiles = Compound.objects.values_list("smiles", flat=True)
     encoded_images = []
     for smiles in compound_smiles:
-        molecule = Chem.MolFromSmiles(smiles)
-        Chem.rdDepictor.Compute2DCoords(molecule)
-        tmpfile = BytesIO()
-        image = Draw.MolToImage(molecule)
-        image.save(tmpfile, 'PNG')
-        encoded_image = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
-        tmpfile.close()
-        encoded_images.append(encoded_image)
+        if smiles:
+            molecule = Chem.MolFromSmiles(smiles)
+            Chem.rdDepictor.Compute2DCoords(molecule)
+            tmpfile = BytesIO()
+            image = Draw.MolToImage(molecule, size=(150, 150))
+            image.save(tmpfile, "PNG")
+            encoded_image = base64.b64encode(tmpfile.getvalue()).decode("utf-8")
+            tmpfile.close()
+            encoded_images.append(encoded_image)
+        else:
+            encoded_images.append(None)
     tableFilter = CompoundFilter(request.GET, queryset=compound_list)
     context = {"experiments": compound_list, "tableFilter": tableFilter, "encoded_images": encoded_images}
     return render(request, "experiments/compounds_list.html", context)
 
 
 @login_required
-@permission_required('is_staff')
+@permission_required("is_staff")
 def edit_compound_view(request, compound_id):
     compound_instance = Compound.objects.get(id=compound_id)
     if request.method == "POST":
@@ -76,15 +77,15 @@ def edit_compound_view(request, compound_id):
     return render(request, "experiments/edit_compound.html", {"compound_form": compound_form})
 
 
-#@login_required
-#@permission_required('is_staff')
+@login_required
+@permission_required('is_staff')
 def compounds_upload_view(request):
     if request.method == "POST":
         csv_file = request.FILES["file"]
         if not csv_file.name.endswith(".csv"):
             messages.error(request, "THIS IS NOT A CSV FILE")
         data_set = csv_file.read().decode("UTF-8")
-        io_string = io.StringIO(data_set)
+        io_string = StringIO(data_set)
         next(io_string)
         for column in csv.reader(io_string, delimiter=",", quotechar="|"):
             try:
@@ -94,9 +95,16 @@ def compounds_upload_view(request):
                 obj.formula = column[3]
                 obj.project = column[4]
                 obj.comments = column[5]
-                obj.smiles = column[6]
+                if Chem.MolFromSmiles(column[6]):
+                    obj.smiles = column[6]
+                else:
+                    obj.smiles = None
                 obj.save()
             except Compound.DoesNotExist:
+                if Chem.MolFromSmiles(column[6]):
+                    smiles = column[6]
+                else:
+                    smiles = None
                 Compound.objects.create(
                     name=column[0],
                     mass=column[1],
@@ -104,9 +112,9 @@ def compounds_upload_view(request):
                     formula=column[3],
                     comments=column[4],
                     project=Project.objects.filter(name=column[5])[0],
-                    smiles=column[6]
+                    smiles=smiles,
                 )
-        return redirect('experiments:compoundList')
+        return redirect("experiments:compoundList")
     else:
         return render(request, "experiments/upload_compounds.html", {})
 
@@ -118,7 +126,7 @@ def experiments_upload_view(request):
         if not csv_file.name.endswith(".csv"):
             messages.error(request, "THIS IS NOT A CSV FILE")
         data_set = csv_file.read().decode("UTF-8")
-        io_string = io.StringIO(data_set)
+        io_string = StringIO(data_set)
         # next(io_string)
         reader = csv.reader(io_string, delimiter=",", quotechar="|")
         first_row = next(reader)
@@ -130,7 +138,9 @@ def experiments_upload_view(request):
                     name=column[3], experiment_date=datetime.strptime(column[2], "%Y-%m-%d").date()
                 )
             try:
-                obj = Experiment.objects.get(compound=Compound.objects.get(name=column[0]), experimental_set=exp_set_obj)
+                obj = Experiment.objects.get(
+                    compound=Compound.objects.get(name=column[0]), experimental_set=exp_set_obj
+                )
                 obj.experiment_date = datetime.strptime(column[2], "%Y-%m-%d").date()
                 obj.aparat = Aparat.objects.filter(name=column[4]).get()
                 obj.lab_person = LabPerson.objects.filter(lab_name=column[5]).get()
@@ -155,6 +165,6 @@ def experiments_upload_view(request):
                     final=bool(column[7]),
                     comments=column[8],
                 )
-        return redirect('experiments:experimentList')
+        return redirect("experiments:experimentList")
     else:
         return render(request, "experiments/upload_experiments.html", {})

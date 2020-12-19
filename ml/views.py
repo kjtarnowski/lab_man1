@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
+from django.shortcuts import render, redirect
 
 from ml.forms import MLAlgorithmForm
 from ml.models import MLAlgorithm, MLRequest
@@ -13,9 +13,9 @@ def ml_algorithm_list_view(request):
 
 
 @login_required
-@permission_required('is_staff')
+@permission_required("is_staff")
 def add_algorithm_view(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = MLAlgorithmForm(request.POST)
         if form.is_valid():
             alg = form.save(commit=False)
@@ -24,18 +24,17 @@ def add_algorithm_view(request):
             alg.joblib_binary_file_algorithm = model
             alg.joblib_binary_file_encoders = encoder
             alg.save()
-            return redirect('ml:add_ml_algorithm')
+            return redirect("ml:add_ml_algorithm")
     else:
         form = MLAlgorithmForm()
-
-    return render(request, 'ml/add_ml_algorithm.html', {'form': form})
+    return render(request, "ml/add_ml_algorithm.html", {"form": form})
 
 
 @login_required
-@permission_required('is_staff')
+@permission_required("is_staff")
 def edit_algorithm_view(request, algorithm_id):
     algorithm_instance = MLAlgorithm.objects.get(id=algorithm_id)
-    if request.method == 'POST':
+    if request.method == "POST":
         form = MLAlgorithmForm(request.POST, instance=algorithm_instance)
         if form.is_valid():
             alg = form.save(commit=False)
@@ -45,10 +44,10 @@ def edit_algorithm_view(request, algorithm_id):
                 alg.joblib_binary_file_algorithm = model
                 alg.joblib_binary_file_encoders = encoder
             alg.save()
-            return redirect('ml:ml_algorithm_list')
+            return redirect("ml:ml_algorithm_list")
     else:
         form = MLAlgorithmForm(instance=algorithm_instance)
-    return render(request, 'ml/add_ml_algorithm.html', {'form': form})
+    return render(request, "ml/add_ml_algorithm.html", {"form": form})
 
 
 @login_required
