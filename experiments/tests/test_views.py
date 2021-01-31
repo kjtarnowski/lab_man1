@@ -87,14 +87,15 @@ class UploadCompoundViewTestCase(TestCase):
         compound_mass = 600
         compound_monoisotopic_mass = 601
         compound_formula = "C6H6"
-        text = f"""compound_name,compound_mass,compound_monoisotopic_mass,compound_formula,comments,project_name
-{compound_name},{compound_mass},{compound_monoisotopic_mass},{compound_formula},test,test_project"""
+        smiles = "BrC(c1cccc2ccccc12)c3cccc4ccccc34"
+        text = f"""compound_name,compound_mass,compound_monoisotopic_mass,compound_formula,comments,project_name,SMILES
+{compound_name},{compound_mass},{compound_monoisotopic_mass},{compound_formula},test,test_project,{smiles},"""
 
-        csv_file = SimpleUploadedFile("file.csv", text.encode())
         self.client.login(username=SUPERUSER_NAME, password=SUPERUSER_PASSWORD)
-        response = self.client.post("/experiments/uploadCompound", {"file": csv_file})
-        self.assertEqual(response.status_code, 301)
-        compound_from_db = Compound.objects.get(name=compound_name)
+        csv_file = SimpleUploadedFile("file.csv", text.encode())
+        response = self.client.post("/experiments/uploadCompound/", {"file": csv_file})
+        self.assertEqual(response.status_code, 302)
+        compound_from_db = Compound.objects.filter(name=compound_name).last()
         self.assertEqual(compound_from_db.mass, compound_mass)
         self.assertEqual(compound_from_db.monoisotopic_mass, compound_monoisotopic_mass)
         self.assertEqual(compound_from_db.formula, compound_formula)
@@ -125,36 +126,37 @@ class UploadExperimentsViewTestCase(TestCase):
     def test_experiment_file_uploading_saving_to_experiment_model(self):
         compound_name = "compound_test"
         text = f"""compound,experiment_type,experiment_date,experimental_set,aparat,lab_person,progess,final,comments
-{compound_name},test_experiment_type,2020-10-01,test_experimental_set,test_aparat,lab_person,TBD,False,-,"""
+{compound_name},test_experiment_type,2020-10-01,test_experimental_set,test_aparat,lab_person,TBD,False,-"""
 
-        csv_file = SimpleUploadedFile("file.csv", text.encode())
         self.client.login(username=SUPERUSER_NAME, password=SUPERUSER_PASSWORD)
-        response = self.client.post("/experiments/uploadExperiment", {"file": csv_file})
-        self.assertEqual(response.status_code, 301)
+        csv_file = SimpleUploadedFile("file.csv", text.encode())
+        response = self.client.post("/experiments/uploadExperiment/", {"file": csv_file})
+        self.assertEqual(response.status_code, 302)
         compound_from_db = Compound.objects.get(name=compound_name)
         experiment_from_db = Experiment.objects.filter(compound=compound_from_db).last()
         self.assertEqual(experiment_from_db.exptype.name, "test_experiment_type")
         self.assertEqual(experiment_from_db.aparat.name, "test_aparat")
         self.assertEqual(experiment_from_db.experimental_set.name, "test_experimental_set")
 
+
     def test_experiment_file_uploading_saving_to_experiment_model_update_experimental_data(self):
         compound_name = "compound_test"
         text = f"""compound,experiment_type,experiment_date,experimental_set,aparat,lab_person,progess,final,comments
 {compound_name},test_experiment_type,2020-10-01,test_experimental_set,test_aparat,lab_person,TBD,False,-,"""
 
-        csv_file = SimpleUploadedFile("file.csv", text.encode())
         self.client.login(username=SUPERUSER_NAME, password=SUPERUSER_PASSWORD)
-        response = self.client.post("/experiments/uploadExperiment", {"file": csv_file})
-        self.assertEqual(response.status_code, 301)
+        csv_file = SimpleUploadedFile("file.csv", text.encode())
+        response = self.client.post("/experiments/uploadExperiment/", {"file": csv_file})
+        self.assertEqual(response.status_code, 302)
 
         text_with_data = f"""compound,experiment_type,experiment_date,experimental_set,aparat,lab_person,progess,final,comments,Sp,HyWi_Bm
 {compound_name},test_experiment_type,2020-10-01,test_experimental_set,test_aparat,lab_person,TBD,False,-,1,2"""
 
         csv_file_with_data = SimpleUploadedFile("file.csv", text_with_data.encode())
-        response = self.client.post("/experiments/uploadExperiment", {"file": csv_file_with_data})
-        self.assertEqual(response.status_code, 301)
+        response = self.client.post("/experiments/uploadExperiment/", {"file": csv_file_with_data})
+        self.assertEqual(response.status_code, 302)
 
-        compound_from_db = Compound.objects.get(name=compound_name)
+        compound_from_db = Compound.objects.filter(name=compound_name).last()
         experiment_from_db = Experiment.objects.filter(compound=compound_from_db).last()
         self.assertEqual(experiment_from_db.experimental_results["Sp"], 1.0)
         self.assertEqual(experiment_from_db.experimental_results["HyWi_Bm"], 2.0)

@@ -1,0 +1,31 @@
+active
+{
+            "Sp": "28.444",
+            "nBM": "22",
+            "ARR": "0.88",
+            "nPyrimidines": "0",
+            "HyWi_B(m)": "4.391",
+            "GATS2i": "0.953",
+            "Eta_betaP_A": "0.909",
+            "nRNR2": "0",
+            "F01[C - N]": "0",
+            "MLOGP": "6.1"
+        }
+
+
+non active
+
+
+{
+            "Sp": "23.591",
+            "nBM": "13",
+            "ARR": "0.524",
+            "nPyrimidines": "0",
+            "HyWi_B(m)": "4.282",
+            "GATS2i": "1.05",
+            "Eta_betaP_A": "0.658",
+            "nRNR2": "0",
+            "F01[C - N]": "0",
+            "MLOGP": "3.722"
+        }
+
